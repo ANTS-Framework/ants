@@ -1,4 +1,4 @@
-ANTS is a framework to manage and apply macOS and Linux client configurations using Ansible Pull.
+ANTS is a framework to manage and apply macOS and Linux host configurations using Ansible Pull.
 
 The ANTS Framework is developed by the Client Services Team of the `University of Basel <https://www.unibas.ch/>`__ `IT Services <https://its.unibas.ch>`__
 and released under the `GNU General Public License Version 3 <https://www.gnu.org/licenses/gpl-3.0.en.html>`__.
@@ -41,7 +41,7 @@ a random point in time within a defined interval (default is 15 minutes).
 Running ANTS with the default configuration will use ansible-pull to clone
 `the ANTS playbook <https://github.com/ANTS-Framework/playbook>`__ from a github repository and execute an ansible run.
 
-By default, this will add a message of the day to your macOS or Linux client. Logs of all the runs are stored at ``/var/log/ants``.
+By default, this will add a message of the day to your macOS or Linux host. Logs of all the runs are stored at ``/var/log/ants``.
 
 ----------------------
 Where to go from here?
@@ -58,40 +58,43 @@ Do not modify the default configuration file as it might be overwritten when upd
 
 Run other roles
 ---------------
-Fork or dublicate `our example playbook <https://github.com/ANTS-Framework/playbook>`__
+Fork or duplicate `our example playbook <https://github.com/ANTS-Framework/playbook>`__
 and change the client configuration to point to your repository. 
-Update ``main.yml`` to assign different roles to your clients.
+Update ``main.yml`` to assign different roles to your hosts.
 
 You can use the default Ansible syntax. You can also use wildcards. Have a look at the
 `Ansible documentation <http://docs.ansible.com/ansible/latest/playbooks_intro.html>`__
 
-Add ssh authentication to your repo
+Add ssh authentication to your repository
 -----------------------------------
-Create your own private playbook, add a ssh authentication and a read only ssh key to it.
+Ansible-pull cat clone a git repository using ssh. You can enable this by creating your own private playbook,
+adding ssh authentication and a read only ssh key to the repository.
 Configure ANTS to use that key.
 
 By default, ANTS will look for a private key at ``/usr/local/ants/etc/id_ants``
 
 You can generate a key with ``ssh-keygen -t rsa -b 4096 -N '' -C "ants client" -f /usr/local/ants/etc/id_ants``
 
-By default, ANTS runs with strict host key checking disabled and will add the host key for github.com to your known_hosts file.
-You should change this in production.
+By default, ANTS is configured to run with strict host key checking disabled and will add the host key for github.com to your known_hosts file.
+You should change this in production. To do so, add ``ssh_stricthostkeychecking = True`` to your ants.cfg
 
 
 Add a dynamic inventory source
 ------------------------------
-You can use scripts to tell ansible-pull which tasks to run on which client.
+Ansible supports dynamic inventory scripts. (A json representation of hosts to group mappings.)
+
+You can use scripts to tell ansible-pull which tasks to run on which host.
 You need an inventory source and a script that can read and return it in the
 `correct format: <http://docs.ansible.com/ansible/latest/dev_guide/developing_inventory.html>`__
 
-By default, ANTS will run a dummy script that will just return your hostname and localhost belonging to a group
+By default, ANTS will run a dummy script that will just return your hostname belonging to a group
 named *ants-common*.
 
 But we also provide ``inventory_ad.py`` which will connect to your Active Directory and return all groups your
 host is a member of. Just add your configuration to ``/etc/ants/ants.cfg``. Note that read only rights for the
 Active Directory user are sufficient.
 
-By using a dynamic inventory source, you can assign roles using AD and let ANTS handle the configuration.
+By using a dynamic inventory source, you can assign roles to a host using AD and let ANTS handle the configuration.
 
 Group Layout in Active Directory
 ________________________________
@@ -110,8 +113,8 @@ No additional infrastructure required.
 -------------
 Communication
 -------------
-- Please use the `GitHub issue tracker <https://github.com/ANTS-Framework/ants-framework.github.io/issues>`__ to file issues.
-- Please use a `GitHub Pull-Request <https://github.com/ANTS-Framework/ants-framework.github.io/pulls>`__ to suggest changes.
+- Please use the `GitHub issue tracker <https://github.com/ANTS-Framework/ants/issues>`__ to file issues.
+- Please use a `GitHub Pull-Request <https://github.com/ANTS-Framework/ants/pulls>`__ to suggest changes.
 
 -----------------------------------------------------
 Comparison of plain Ansible and Ansible Tower to ANTS
@@ -119,9 +122,9 @@ Comparison of plain Ansible and Ansible Tower to ANTS
 
 What does ANTS do, that Ansible can not?
 
-- ANTS gives you a set of ready to be used roles for typical macOS and Linux client configurations.
-- ANTS let's you utilize Active Directory to map computers to roles. With all its delegation and nesting features.
-- ANTS utilizes Ansible Pull and therefore does not require an active network connection to a central server. Roles will be locally applied even if the client is offline. 
+- ANTS gives you a set of ready to be used roles for typical macOS and Linux host configurations.
+- ANTS let's you utilize Active Directory to map computers to roles. With all it's delegation and nesting features.
+- ANTS utilizes Ansible Pull and therefore does not require an active network connection to a central server. Roles will be locally applied even if the host is offline. 
 
 What does Ansible or Ansible Tower do that ANTS does not?
 

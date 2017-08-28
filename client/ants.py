@@ -85,7 +85,6 @@ def run_ansible(args):
            '-d', args.destination,
            '-U', args.git_repo,
            '-C', args.branch,
-           '-e', 'ants__roles_path=%s/roles' % args.destination,
            args.playbook]
     if os.path.isfile(args.ssh_key):
         logger.console_logger.debug("Found ssh key at %s" % args.ssh_key)
@@ -94,7 +93,6 @@ def run_ansible(args):
     else:
         logger.console_logger.debug("No key found at %s" % args.ssh_key)
     if args.verbose:
-        logger.console_logger.debug("Running ansible-pull in verbose mode")
         cmd.append('-v')
     if not args.stricthostkeychecking:
         logger.console_logger.debug(
@@ -119,6 +117,7 @@ def __main__():
         logger.console_logger.setLevel(logger.logging.DEBUG)
     if not configer.is_root():
         sys.exit('Script must be run as root')
+    logger.console_logger.debug("Running ansible-pull in verbose mode")
     logger.status_file_rollover()
     run_ansible(args)
 
