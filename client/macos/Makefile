@@ -1,5 +1,5 @@
 include /usr/local/share/luggage/luggage.make
-PACKAGE_VERSION=1.0
+PACKAGE_VERSION=1.1
 TITLE=ants
 PACKAGE_NAME=ants_macOS-${PACKAGE_VERSION}
 REVERSE_DOMAIN=ch.unibas.its.cs

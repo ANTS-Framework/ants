@@ -22,7 +22,7 @@ def main():
     """Print default inventory in JSON."""
     output = dict()
     fqdn = inventory.get_hostname()
-    output['ants-common'] = (fqdn)
+    output['ants-common'] = ([fqdn])
     print inventory.format_output(output)
 
 
