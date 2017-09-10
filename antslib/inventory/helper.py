@@ -1,8 +1,16 @@
-"""inventory
+"""helper
 =============
 
-Utility functions for inventory scripts.
+Helper functions for inventory scripts.
 """
+
+__author__ = "Balz Aschwanden"
+__email__ = "balz.aschwanden@unibas.ch"
+__copyright__ = "Copyright 2017, University of Basel"
+
+__credits__ = ["Balz Aschwanden"]
+__license__ = "GPL"
+
 
 import os
 import json

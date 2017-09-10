@@ -127,7 +127,7 @@ def str2bool(v):
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
 
-def parse_args(version, LOG_RECAP, DYNAMIC_INVENTORY, DESTINATION, CFG):
+def parse_args(version, LOG_RECAP, DESTINATION, CFG):
     """Parse and return command line parameters.
 
     This function relies on the custom actions defined previousely.
@@ -135,7 +135,8 @@ def parse_args(version, LOG_RECAP, DYNAMIC_INVENTORY, DESTINATION, CFG):
     entered on the command line.
     """
     parser = argparse.ArgumentParser()
-    ants_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+    _ROOT = os.path.abspath(os.path.dirname(__file__))
+    inventory = os.path.join(_ROOT, 'inventory', CFG['hosts_file'])
 
     # Information
     parser.add_argument('--version', help='Print software version and exit',
@@ -146,8 +147,7 @@ def parse_args(version, LOG_RECAP, DYNAMIC_INVENTORY, DESTINATION, CFG):
                         action=GetStatusAction, logfile=LOG_RECAP)
     parser.add_argument('-g', '--groups',
                         help='Print group information for this host and exit',
-                        action=GetGroupsAction,
-                        inventory_script=DYNAMIC_INVENTORY)
+                        action=GetGroupsAction, inventory_script=inventory)
     parser.add_argument('-a', '--active_branch',
                         help='Print the active branch name and exit',
                         action=GetActiveBranchAction, branch=CFG['branch'])
@@ -161,27 +161,26 @@ def parse_args(version, LOG_RECAP, DYNAMIC_INVENTORY, DESTINATION, CFG):
     # Action
     parser.add_argument('--initialize', help='Write a local configuration for ants. Existing local configuration will be overwritten',
                         action=InitializeAntsAction)
-    parser.add_argument('-v', '--verbose',
-                        help='Run ansible pull in verbose mode',
-                        action='store_true')
-    parser.add_argument('-i', '--inventory',
-                        help='Add a custom inventory script or file',
-                        default=os.path.join(ants_path, CFG['hosts_file']))
-    parser.add_argument('-w', '--wait', help='Wait a random interval before starting ansible-pull',
-                        action='store_true')
+    parser.add_argument(
+        '-v', '--verbose', help='Run ansible pull in verbose mode', action='store_true')
+    parser.add_argument('-i', '--inventory', help='Path to your dynamic inventory script', default=inventory)
+    parser.add_argument('-w', '--wait', help = 'Wait a random interval before starting ansible-pull',
+                        action = 'store_true')
     parser.add_argument('-d', '--destination',
-                        help='Set destionation for git checkout',
-                        default=DESTINATION)
-    parser.add_argument('-b', '--branch', help='Set active branch',
-                        default=CFG['branch'])
-    parser.add_argument('--git_repo', help='Set git repository',
-                        default=CFG['git_repository'])
-    parser.add_argument('--ssh_key', help='Path to private key',
-                        default=os.path.join(ants_path, 'etc', CFG['ssh_key']))
-    parser.add_argument('--playbook', help='Path to playbook file',
-                        default=CFG['ansible_playbook'])
-    parser.add_argument('--stricthostkeychecking', help='Enable/Disable strict host key checking for ssh.',
-                        type=str2bool, default=CFG['ssh_stricthostkeychecking'])
+                        help = 'Set destionation for git checkout',
+                        default = DESTINATION)
+    parser.add_argument('-b', '--branch', help = 'Set active branch',
+                        default = CFG['branch'])
+    parser.add_argument('--git_repo', help = 'Set git repository',
+                        default = CFG['git_repository'])
+    parser.add_argument('--ssh_key', help = 'Path to private key',
+                        default = CFG['ssh_key'])
+    parser.add_argument('--playbook', help = 'Path to playbook file',
+                        default = CFG['ansible_playbook'])
+    parser.add_argument('--stricthostkeychecking', help = 'Enable/Disable strict host key checking for ssh.',
+                        type = str2bool, default = CFG['ssh_stricthostkeychecking'])
+    parser.add_argument('--ansible_pull_path', help = 'Path to the ansible-pull executable',
+                        default = CFG['ansible_pull_path'])
     return parser.parse_args()
 
 
