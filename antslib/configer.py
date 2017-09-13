@@ -10,6 +10,8 @@ import os
 import pwd
 import grp
 
+_ROOT = os.path.abspath(os.path.dirname(__file__))
+
 
 def is_root():
     """Check if user is root and return True or False."""
@@ -37,8 +39,7 @@ def read_config(config_section, config_file='ants.cfg'):
     in config file.
     """
 
-    ants_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-    default_config = os.path.join(ants_path, 'etc', config_file)
+    default_config = os.path.join(_ROOT, 'etc', config_file)
     config_path = '/etc/ants/'
     system_config = os.path.join(config_path, config_file)
 
@@ -47,7 +48,12 @@ def read_config(config_section, config_file='ants.cfg'):
 
     config = ConfigParser.ConfigParser()
     config.optionxform = str
-    config.read([default_config, system_config])
+    try:
+        config.read([default_config, system_config])
+    except ConfigParser.MissingSectionHeaderError, ConfigParser.ParsingError:
+        print 'Error while reading configuration from %s.' % system_config
+        print 'Ignoring system configuraiton'
+        config.read([default_config])
 
     return dict(config.items(config_section))
 

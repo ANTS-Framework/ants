@@ -8,7 +8,7 @@ Run ansible-pull with a set of defined parameters
 and log the content of these runs.
 """
 
-__version__ = '1.1'
+__version__ = '1.2.1'
 
 __author__ = "Balz Aschwanden"
 __email__ = "balz.aschwanden@unibas.ch"
@@ -78,7 +78,12 @@ def run_ansible(args):
     Documentation:
     http://docs.ansible.com/ansible/dev_guide/developing_api.html
     """
-    cmd = ['/usr/local/bin/ansible-pull',
+
+    for f in [args.ansible_pull_path, args.inventory]:
+        if not os.path.isfile(f):
+            sys.exit("Could not find executable at %s. Aborting." % f)
+
+    cmd = [args.ansible_pull_path,
            '--clean',
            '-f',
            '-i', args.inventory,
@@ -96,7 +101,7 @@ def run_ansible(args):
         cmd.append('-v')
     if not args.stricthostkeychecking:
         logger.console_logger.debug(
-            "Disable strict host key checking for ansible-pull.")
+            "Strict host key checking for ansible-pull is disabled.")
         cmd.append('--accept-host-key')
     if args.wait:
         logger.console_logger.debug(
@@ -112,7 +117,7 @@ def run_ansible(args):
 
 def __main__():
     args = argparser.parse_args(__version__, os.path.join(CFG['log_dir'], 'recap.log'),
-                                DYNAMIC_INVENTORY, DESTINATION, CFG)
+                                DESTINATION, CFG)
     if args.verbose:
         logger.console_logger.setLevel(logger.logging.DEBUG)
     if not configer.is_root():

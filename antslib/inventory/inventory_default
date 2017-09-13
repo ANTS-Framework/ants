@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 """inventory_default
 ===================
@@ -15,15 +15,23 @@ using a dynamic inventory script like inventory_ad.py
 is the prefered way of running ants.
 """
 
-from antslib import inventory
+__author__ = "Balz Aschwanden"
+__email__ = "balz.aschwanden@unibas.ch"
+__copyright__ = "Copyright 2017, University of Basel"
+
+__credits__ = ["Balz Aschwanden"]
+__license__ = "GPL"
+
+
+from antslib.inventory import helper
 
 
 def main():
     """Print default inventory in JSON."""
     output = dict()
-    fqdn = inventory.get_hostname()
+    fqdn = helper.get_hostname()
     output['ants-common'] = ([fqdn])
-    print inventory.format_output(output)
+    print helper.format_output(output)
 
 
 if __name__ == '__main__':
