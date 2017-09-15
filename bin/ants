@@ -98,7 +98,7 @@ def run_ansible(args):
     logger.console_logger.debug("Using %s" % ansible_pull_path)
         
     for f in [ansible_pull_path, args.inventory]:
-        if not os.path.isfile(f):
+        if not os.path.isfile(f) and not os.access(f, os.X_OK):
             sys.exit("Could not find executable at %s. Aborting." % f)
 
     cmd = [ansible_pull_path,
