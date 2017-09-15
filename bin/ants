@@ -8,7 +8,7 @@ Run ansible-pull with a set of defined parameters
 and log the content of these runs.
 """
 
-__version__ = '1.2.1'
+__version__ = '1.3'
 
 __author__ = "Balz Aschwanden"
 __email__ = "balz.aschwanden@unibas.ch"
@@ -33,15 +33,18 @@ CFG = configer.read_config('main')
 ANTS_PATH = os.path.dirname(os.path.realpath(__file__))
 DYNAMIC_INVENTORY = os.path.join(ANTS_PATH, CFG['hosts_file'])
 DESTINATION = os.path.expanduser(CFG['destination'])
+_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 
 def find_file(f):
     """Search for a file in environment PATH and return first match or None"""
     paths = os.environ['PATH'].split(':')
+    paths.append(_ROOT)
     for path in paths:
         file_path = os.path.join(path, f)
+        logger.console_logger.debug("Looking for %s in %s" % (f, path))
         if os.path.isfile(file_path):
-            logger.console_logger.debug("Found file at %s" % file_path)
+            logger.console_logger.debug("Found %s at %s" % (f, file_path))
             return file_path
     return None
 
