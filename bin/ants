@@ -35,6 +35,17 @@ DYNAMIC_INVENTORY = os.path.join(ANTS_PATH, CFG['hosts_file'])
 DESTINATION = os.path.expanduser(CFG['destination'])
 
 
+def find_executable(executable):
+    """Search for exexutable in environment PATH and return first match or None"""
+    paths = os.environ['PATH'].split(':')
+    for path in paths:
+        executable_location = os.path.join(path, executable)
+        if os.path.isfile(executable_location):
+            logger.console_logger.debug("Found executable at %s" % executable_location)
+            return executable_location
+    return None
+
+
 def parse_proc(proc):
     """Read subprocess output and dispatch it to logger.
 
@@ -78,12 +89,19 @@ def run_ansible(args):
     Documentation:
     http://docs.ansible.com/ansible/dev_guide/developing_api.html
     """
-
-    for f in [args.ansible_pull_path, args.inventory]:
+    ansible_pull_path = args.ansible_pull_path
+    if not ansible_pull_path:
+        logger.console_logger.debug("args.ansible_pull_path is unset searching in PATH")
+        ansible_pull_path = find_executable('ansible-pull')
+    if not ansible_pull_path:
+        sys.exit("Could not find executable ansible-pull. Aborting.")
+    logger.console_logger.debug("Using %s" % ansible_pull_path)
+        
+    for f in [ansible_pull_path, args.inventory]:
         if not os.path.isfile(f):
             sys.exit("Could not find executable at %s. Aborting." % f)
 
-    cmd = [args.ansible_pull_path,
+    cmd = [ansible_pull_path,
            '--clean',
            '-f',
            '-i', args.inventory,
