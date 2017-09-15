@@ -35,14 +35,14 @@ DYNAMIC_INVENTORY = os.path.join(ANTS_PATH, CFG['hosts_file'])
 DESTINATION = os.path.expanduser(CFG['destination'])
 
 
-def find_executable(executable):
-    """Search for exexutable in environment PATH and return first match or None"""
+def find_file(f):
+    """Search for a file in environment PATH and return first match or None"""
     paths = os.environ['PATH'].split(':')
     for path in paths:
-        executable_location = os.path.join(path, executable)
-        if os.path.isfile(executable_location):
-            logger.console_logger.debug("Found executable at %s" % executable_location)
-            return executable_location
+        file_path = os.path.join(path, f)
+        if os.path.isfile(file_path):
+            logger.console_logger.debug("Found file at %s" % file_path)
+            return file_path
     return None
 
 
@@ -91,15 +91,17 @@ def run_ansible(args):
     """
     ansible_pull_path = args.ansible_pull_path
     if not ansible_pull_path:
-        logger.console_logger.debug("args.ansible_pull_path is unset searching in PATH")
-        ansible_pull_path = find_executable('ansible-pull')
+        logger.console_logger.debug("Variable ansible_pull_path is not set. Searching in PATH.")
+        ansible_pull_path = find_file('ansible-pull')
     if not ansible_pull_path:
         sys.exit("Could not find executable ansible-pull. Aborting.")
     logger.console_logger.debug("Using %s" % ansible_pull_path)
         
     for f in [ansible_pull_path, args.inventory]:
         if not os.path.isfile(f):
-            sys.exit("Could not find executable at %s. Aborting." % f)
+            sys.exit("Could not find file at %s. Aborting." % f)
+        if not os.access(f, os.X_OK):
+            sys.exit("File is not executable at %s. Aborting." % f)
 
     cmd = [ansible_pull_path,
            '--clean',
