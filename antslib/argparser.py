@@ -136,7 +136,7 @@ def parse_args(version, LOG_RECAP, DESTINATION, CFG):
     """
     parser = argparse.ArgumentParser()
     _ROOT = os.path.abspath(os.path.dirname(__file__))
-    inventory = os.path.join(_ROOT, 'inventory', CFG['hosts_file'])
+    inventory = os.path.join(_ROOT, 'inventory', CFG['inventory_script'])
 
     # Information
     parser.add_argument('--version', help='Print software version and exit',
@@ -179,8 +179,8 @@ def parse_args(version, LOG_RECAP, DESTINATION, CFG):
                         default = CFG['ansible_playbook'])
     parser.add_argument('--stricthostkeychecking', help = 'Enable/Disable strict host key checking for ssh.',
                         type = str2bool, default = CFG['ssh_stricthostkeychecking'])
-    parser.add_argument('--ansible_pull_path', help = 'Path to the ansible-pull executable',
-                        default = CFG['ansible_pull_path'])
+    parser.add_argument('--ansible_pull_exe', help = 'Path to the ansible-pull executable',
+                        default = CFG['ansible_pull_exe'])
     return parser.parse_args()
 
 
