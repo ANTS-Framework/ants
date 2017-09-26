@@ -9,6 +9,7 @@ import ConfigParser
 import os
 import pwd
 import grp
+import re
 
 _ROOT = os.path.abspath(os.path.dirname(__file__))
 
@@ -58,8 +59,12 @@ def read_config(config_section, config_file='ants.cfg'):
     return dict(config.items(config_section))
 
 
-def get_values(cfg):
+def get_values(cfg, section_name):
     """Take and return a dict of values and prompt the user for a reply."""
+    msg = 'Configuration for section: %s' % section_name
+    print "%s" % re.sub(r'[a-zA-Z :]', "#", msg)
+    print "%s" % msg
+    print "%s" % re.sub(r'[a-zA-Z :]', "#", msg)
     for key, value in cfg.iteritems():
         cfg[key] = raw_input("%s [Example: %s]:" % (key, value)) or value
     return cfg
@@ -74,16 +79,19 @@ def get_config():
     Only values that differ from the system defaults are written to
     the local config file.
     """
-    cfg_main = get_values(read_config('main'))
-    cfg_ad = get_values(read_config('ad'))
+    cfg_main = get_values(read_config('main'), 'main')
+    cfg_ad = None
+    if cfg_main['inventory_script'] == 'inventory_ad':
+        cfg_ad = get_values(read_config('ad'), 'ad')
 
     config = ConfigParser.ConfigParser()
     config.add_section('main')
     for key, value in cfg_main.iteritems():
         config.set('main', key, value)
-    config.add_section('ad')
-    for key, value in cfg_ad.iteritems():
-        config.set('ad', key, value)
+    if cfg_ad:
+        config.add_section('ad')
+        for key, value in cfg_ad.iteritems():
+            config.set('ad', key, value)
     return config
 
 
