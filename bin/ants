@@ -39,7 +39,7 @@ _ROOT = os.path.abspath(os.path.dirname(__file__))
 def find_file(f):
     """Search for a file in environment PATH and return first match or None"""
     paths = os.environ['PATH'].split(':')
-    paths.append(_ROOT)
+    paths.insert(0, _ROOT)
     for path in paths:
         file_path = os.path.join(path, f)
         logger.console_logger.debug("Looking for %s in %s" % (f, path))
