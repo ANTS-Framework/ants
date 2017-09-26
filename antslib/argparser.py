@@ -46,7 +46,7 @@ class GetStatusAction(argparse.Action):
                     if 'Client status:' in line:
                         status = line.rstrip().split(
                             'Client status:')[1].split()[0]
-        print status
+	sys.stdout.write('%s\n' % status)
         parser.exit()
 
 
@@ -66,7 +66,7 @@ class GetGroupsAction(argparse.Action):
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE)
         (out, err) = proc.communicate()
-        print out
+	sys.stdout.write('%s\n' % out)
         parser.exit()
 
 
@@ -79,7 +79,7 @@ class GetActiveBranchAction(argparse.Action):
                                                     nargs=0, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
-        print 'Branch: %s' % self.branch
+        sys.stdout.write('Branch: %s\n' % self.branch)
         parser.exit()
 
 
@@ -92,7 +92,7 @@ class GetGitRepoAction(argparse.Action):
                                                **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
-        print 'Repo: %s' % self.repo
+	sys.stdout.write('Repo: %s\n' % self.repo)
         parser.exit()
 
 
@@ -110,7 +110,7 @@ class GetPolicyVersionAction(argparse.Action):
         if os.path.isfile(policy_version_file):
             with open(policy_version_file, 'r') as f:
                 version = f.read().rstrip()
-        print version
+	sys.stdout.write('%s\n' % version)
         parser.exit()
 
 
