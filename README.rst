@@ -38,7 +38,7 @@ Installing ants using pip
 ******************************************
 Installing ants using macOS .pkg installer
 ******************************************
-- Download the latest .pkg installer from the `releases page <https://github.com/ANTS-Framework/ants/releases>`__
+- Download the latest .pkg installer from the `releases page <https://github.com/ANTS-Framework/ants/releases/latest>`__
 - Execute the installer. This will take care of all dependencies
 - A launch daemon will be installed, running `ants` every 15 minutes. It will trigger after the next restart.
 
