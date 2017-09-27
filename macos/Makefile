@@ -7,7 +7,7 @@ PACKAGE_VERSION=1.3.2
 PAYLOAD=\
 		ants_client_virtualenv \
 		pack-script-preinstall \
-		pack-script-postinstall \
+		pack-pathd \
 		pack-Library-LaunchDaemons-ch.unibas.its.cs.ants.plist \
 		pack-Library-LaunchDaemons-ch.unibas.its.cs.ants.run-now.plist
 
@@ -38,6 +38,16 @@ fix_venv_path_inventory: setup_virtualenv
 	done
 
 ants_client_virtualenv: fix_venv_path fix_venv_path_inventory
+
+l_pathd:
+	@sudo mkdir -p ${WORK_D}/private/etc/paths.d
+	@sudo chown -R root:wheel ${WORK_D}/private/etc/paths.d
+	@sudo chmod -R 755 ${WORK_D}/private/etc/paths.d
+
+pack-pathd: l_pathd
+	@sudo ${CP} ch.unibas.its.cs.ants ${WORK_D}/private/etc/paths.d
+	@sudo chown -R root:wheel ${WORK_D}/private/etc/paths.d/ch.unibas.its.cs.ants
+	@sudo chmod -R 644 ${WORK_D}/private/etc/paths.d/ch.unibas.its.cs.ants
 
 ants_client:
 	# Install ants_client to system python
