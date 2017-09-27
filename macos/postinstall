@@ -1,0 +1,3 @@
+#!/bin/bash
+# Link ants executable to default path
+/bin/ln -s /Library/ANTS-Framework/bin/ants /usr/local/bin/ants

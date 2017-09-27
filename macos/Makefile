@@ -3,8 +3,13 @@ include /usr/local/share/luggage/luggage.make
 
 TITLE=ants_client
 REVERSE_DOMAIN=com.github.antsframework.ants
-PACKAGE_VERSION=1.3
-PAYLOAD=ants_client_virtualenv pack-script-preinstall
+PACKAGE_VERSION=1.3.2
+PAYLOAD=\
+		ants_client_virtualenv \
+		pack-script-preinstall \
+		pack-script-postinstall \
+		pack-Library-LaunchDaemons-ch.unibas.its.cs.ants.plist \
+		pack-Library-LaunchDaemons-ch.unibas.its.cs.ants.run-now.plist
 
 ANTS_LIB=/Library/ANTS-Framework
 VENV_PYTHON_EXE=${ANTS_LIB}/bin/python
