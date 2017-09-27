@@ -16,12 +16,9 @@
         <true/>
         <key>ProgramArguments</key>
         <array>
-            <string>/usr/local/bin/ants</string>
-            <string>-w</string>
-            <string>0</string>
-            <string>&amp;&amp;</string>
-            <string>/bin/rm</string>
-            <string>/Users/Shared/.ch.unibas.its.cs.ants.run-now</string>
+            <string>bash</string>
+            <string>-c</string>
+            <string>/usr/local/bin/ants; /bin/rm /Users/Shared/.ch.unibas.its.cs.ants.run-now</string>
         </array>
         <key>StandardErrorPath</key>
         <string>/var/log/system.log</string>
