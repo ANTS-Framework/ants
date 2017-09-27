@@ -123,7 +123,8 @@ def write_cache(cache_file, output):
                 cache.write(line)
     except IOError as e:
         logger.console_logger.error('Error while writing cache.')
-        logger.console_logger.error('Make sure base process has the right permissions and path exists for %s' % cache_file)
+        logger.console_logger.error(
+            'Make sure base process has the right permissions and path exists for %s' % cache_file)
         raise
 
 

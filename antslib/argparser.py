@@ -180,8 +180,8 @@ def parse_args(version, LOG_RECAP, DESTINATION, CFG):
                         action=ShowConfigAction)
 
     # Action
-    parser.add_argument('--initialize', help = 'Write a local configuration for ants. Existing local configuration will be overwritten',
-                        action = InitializeAntsAction)
+    parser.add_argument('--initialize', help='Write a local configuration for ants. Existing local configuration will be overwritten',
+                        action=InitializeAntsAction)
     parser.add_argument(
         '-v', '--verbose', help='Run ansible pull in verbose mode', action='store_true')
     parser.add_argument(
