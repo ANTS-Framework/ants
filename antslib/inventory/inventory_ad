@@ -35,6 +35,7 @@ from ldap3 import Server, Connection, Tls, NTLM
 
 
 from antslib import configer
+from antslib import logger
 
 
 def connect_to_ad(ldap_user, ldap_pw, ldap_host):
@@ -116,9 +117,14 @@ def format_output(output):
 
 def write_cache(cache_file, output):
     """Write inventory cache to file."""
-    with open(cache_file, 'w') as cache:
-        for line in format_output(output):
-            cache.write(line)
+    try:
+        with open(cache_file, 'w') as cache:
+            for line in format_output(output):
+                cache.write(line)
+    except IOError as e:
+        logger.console_logger.error('Error while writing cache.')
+        logger.console_logger.error('Make sure base process has the right permissions and path exists for %s' % cache_file)
+        raise
 
 
 def read_cache(cache_file):
@@ -133,7 +139,7 @@ def main():
     """Fetching groups from AD and printing them in JSON."""
     cfg = configer.read_config('ad')
     ants_path = path.dirname(path.realpath(__file__))
-    cache_file = path.join(ants_path, 'etc', cfg['cache_file'])
+    cache_file = cfg['cache_file']
 
     # Reading fully qualified host name and converting it to lower case
     fqdn = gethostname().lower()
@@ -165,7 +171,10 @@ def main():
                 output[group] = ['localhost']
 
         # Writing output to cache file
-        write_cache(cache_file, output)
+        try:
+            write_cache(cache_file, output)
+        except IOError as e:
+            sys.exit(e)
 
         # Adding online Group after cache is written.
         # We do not want to cache this group
