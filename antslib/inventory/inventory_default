@@ -29,7 +29,8 @@ from antslib.inventory import helper
 def main():
     """Print default inventory in JSON."""
     output = dict()
-    output['ants-common'] = ('localhost')
+    fqdn = helper.get_hostname()
+    output['ants-common'] = ([fqdn])
     print helper.format_output(output)
 
 

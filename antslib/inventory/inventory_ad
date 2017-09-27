@@ -168,7 +168,7 @@ def main():
                                                   cfg['group_prefix'])
             # Adding groups to output
             for group in computer_groups:
-                output[group] = ['localhost']
+                output[group] = [fqdn]
 
         # Writing output to cache file
         try:
