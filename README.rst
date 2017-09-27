@@ -31,14 +31,14 @@ Getting started
 *************************
 Installing ants using pip
 *************************
-- Make sure ``Git`` is installed on your machine
+- Make sure ``git`` is installed on your machine
 - Install the latest ants client using pip: ``pip install ants_client``
 - Pip will install the ANTS client with a default configuration and put the executable in your path.
 
 ******************************************
 Installing ants using macOS .pkg installer
 ******************************************
-- Download the latest .pkg installer from the `releases page <https://github.com/ANTS-Framework/ants/releases>`__
+- Download the latest .pkg installer from the `releases page <https://github.com/ANTS-Framework/ants/releases/latest>`__
 - Execute the installer. This will take care of all dependencies
 - A launch daemon will be installed, running `ants` every 15 minutes. It will trigger after the next restart.
 
@@ -47,7 +47,7 @@ Run ants
 ********
 - Open your terminal
 - Start an ANTS run by typing ``ants``.
-- Wait for ANTS to finish, then open another shell. You will see the message of the day.
+- Wait for ANTS to finish, then open another shell. You will see a new message of the day.
 
 **************
 What happened?
@@ -55,21 +55,27 @@ What happened?
 Running ANTS with the default configuration will use ansible-pull to clone
 `the ANTS playbook <https://github.com/ANTS-Framework/playbook>`__ from a github repository and execute an ansible run.
 
-By default, this will add a message of the day to your macOS or Linux host. Logs of all the runs are stored at ``/var/log/ants``.
+By default, this will generate ``/etc/motd`` to add a message of the day to your macOS or Linux host.
+Logs of all the runs are stored at ``/var/log/ants``.
 
 ----------------------
 Where to go from here?
 ----------------------
 
--------------------------
+*************************
 Look at the configuration
--------------------------
-Run ``ants -h`` to see all command line options or write your own configuration.
+*************************
+Run ``ants -h`` to see all command line options.
 
-Besides the default configuration file in the ants_client package, ANTS
-will also look for a local configuration file at ``/etc/ants/ants.cfg``.
+Run ``ants --show-config`` to see the active configuration.
 
-Do not modify the default configuration file as it might be overwritten when updating ANTS.
+****************************
+Write your own configuration
+****************************
+Run ``ants --initialize`` to write your own configuration.
+
+Your local configuration file will be saved at ``/etc/ants/ants.cfg``.
+You can also edit it using your favorite text editor.
 
 ---------------
 Run other roles
@@ -84,7 +90,7 @@ You can use the default Ansible syntax. You can also use wildcards. Have a look 
 -----------------------------------------
 Add ssh authentication to your repository
 -----------------------------------------
-Ansible-pull cat clone a git repository using ssh. You can enable this by creating your own private playbook,
+Ansible-pull can clone a git repository using ssh. You can enable this by creating your own private playbook,
 adding ssh authentication and a read only ssh key to the repository.
 Configure ANTS to use that key.
 
@@ -105,11 +111,15 @@ You need an inventory source and a script that can read and return it in the
 `correct format: <http://docs.ansible.com/ansible/latest/dev_guide/developing_inventory.html>`__
 
 By default, ANTS will run a dummy script ``inventory_default`` that will just return your hostname belonging to a group
-named *ants-common*.
+named *ants-common*. You can edit ``main.yml`` straight away and assign roles using host names. But
+ANTS shows it's real power when ansible-pull is combined with a dynamic inventory using group mappings.
 
-But we also provide ``inventory_ad`` which will connect to your Active Directory and return all groups your
+For this we provide the ``inventory_ad`` script  which will connect to your Active Directory and return all groups your
 host is a member of. Just add your configuration to ``/etc/ants/ants.cfg``. Note that read only rights for the
 Active Directory user are sufficient.
+
+*Your host DOSN'T have to be bound to Active Directory in order for this to work.*
+You can use a placeholder object.
 
 By using a dynamic inventory source, you can assign roles to a host using AD and let ANTS handle the configuration.
 
@@ -126,7 +136,7 @@ What else do I need
 -------------------
 Nothing. You just set up a configuration management that communicates savely over ssh using your AD and Github.
 
-No additional infrastructure required.
+No additional infrastructure and no AD binding required.
 
 -------------
 Communication
