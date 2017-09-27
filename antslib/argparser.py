@@ -50,6 +50,24 @@ class GetStatusAction(argparse.Action):
         parser.exit()
 
 
+class ShowConfigAction(argparse.Action):
+    """Print ants configuration to stdout and exit."""
+
+    def __init__(self, option_strings, dest, nargs=None, **kwargs):
+        super(ShowConfigAction,
+              self).__init__(option_strings, dest, nargs=0, **kwargs)
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        cfg_sections = ['main', 'ad']
+        for section in cfg_sections:
+            sys.stdout.write('[%s]\n' % (section))
+            c = configer.read_config(section)
+            for key in c:
+                sys.stdout.write('%s: %s\n' % (key, c[key]))
+            sys.stdout.write('\n')
+        parser.exit()
+
+
 class GetGroupsAction(argparse.Action):
     """Execute inventory script and exit."""
 
@@ -157,10 +175,13 @@ def parse_args(version, LOG_RECAP, DESTINATION, CFG):
     parser.add_argument('-r', '--repo',
                         help='Print the active git repo name and exit',
                         action=GetGitRepoAction, repo=CFG['git_repository'])
+    parser.add_argument('--show-config',
+                        help='Print ants configuration information',
+                        action=ShowConfigAction)
 
     # Action
-    parser.add_argument('--initialize', help='Write a local configuration for ants. Existing local configuration will be overwritten',
-                        action=InitializeAntsAction)
+    parser.add_argument('--initialize', help = 'Write a local configuration for ants. Existing local configuration will be overwritten',
+                        action = InitializeAntsAction)
     parser.add_argument(
         '-v', '--verbose', help='Run ansible pull in verbose mode', action='store_true')
     parser.add_argument(
