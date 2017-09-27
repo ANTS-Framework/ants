@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+    <dict>
+        <key>KeepAlive</key>
+        <dict>
+            <key>PathState</key>
+            <dict>
+                <key>/Users/Shared/.ch.unibas.its.cs.ants.run-now</key>
+                <true/>
+            </dict>
+        </dict>
+        <key>Label</key>
+        <string>ch.unibas.its.cs.ants.run-now</string>
+        <key>OnDemand</key>
+        <true/>
+        <key>ProgramArguments</key>
+        <array>
+            <string>bash</string>
+            <string>-c</string>
+            <string>/Library/ANTS-Framework/bin/ants; /bin/rm /Users/Shared/.ch.unibas.its.cs.ants.run-now</string>
+        </array>
+        <key>StandardErrorPath</key>
+        <string>/var/log/system.log</string>
+        <key>StandardOutPath</key>
+        <string>/var/log/system.log</string>
+    </dict>
+</plist>

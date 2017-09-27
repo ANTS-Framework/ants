@@ -46,7 +46,25 @@ class GetStatusAction(argparse.Action):
                     if 'Client status:' in line:
                         status = line.rstrip().split(
                             'Client status:')[1].split()[0]
-        print status
+        sys.stdout.write('%s\n' % status)
+        parser.exit()
+
+
+class ShowConfigAction(argparse.Action):
+    """Print ants configuration to stdout and exit."""
+
+    def __init__(self, option_strings, dest, nargs=None, **kwargs):
+        super(ShowConfigAction,
+              self).__init__(option_strings, dest, nargs=0, **kwargs)
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        cfg_sections = ['main', 'ad']
+        for section in cfg_sections:
+            sys.stdout.write('[%s]\n' % (section))
+            c = configer.read_config(section)
+            for key in c:
+                sys.stdout.write('%s: %s\n' % (key, c[key]))
+            sys.stdout.write('\n')
         parser.exit()
 
 
@@ -66,7 +84,7 @@ class GetGroupsAction(argparse.Action):
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE)
         (out, err) = proc.communicate()
-        print out
+        sys.stdout.write('%s\n' % out)
         parser.exit()
 
 
@@ -79,7 +97,7 @@ class GetActiveBranchAction(argparse.Action):
                                                     nargs=0, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
-        print 'Branch: %s' % self.branch
+        sys.stdout.write('Branch: %s\n' % self.branch)
         parser.exit()
 
 
@@ -92,7 +110,7 @@ class GetGitRepoAction(argparse.Action):
                                                **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
-        print 'Repo: %s' % self.repo
+        sys.stdout.write('Repo: %s\n' % self.repo)
         parser.exit()
 
 
@@ -110,7 +128,7 @@ class GetPolicyVersionAction(argparse.Action):
         if os.path.isfile(policy_version_file):
             with open(policy_version_file, 'r') as f:
                 version = f.read().rstrip()
-        print version
+        sys.stdout.write('%s\n' % version)
         parser.exit()
 
 
@@ -136,7 +154,7 @@ def parse_args(version, LOG_RECAP, DESTINATION, CFG):
     """
     parser = argparse.ArgumentParser()
     _ROOT = os.path.abspath(os.path.dirname(__file__))
-    inventory = os.path.join(_ROOT, 'inventory', CFG['hosts_file'])
+    inventory = os.path.join(_ROOT, 'inventory', CFG['inventory_script'])
 
     # Information
     parser.add_argument('--version', help='Print software version and exit',
@@ -157,30 +175,34 @@ def parse_args(version, LOG_RECAP, DESTINATION, CFG):
     parser.add_argument('-r', '--repo',
                         help='Print the active git repo name and exit',
                         action=GetGitRepoAction, repo=CFG['git_repository'])
+    parser.add_argument('--show-config',
+                        help='Print ants configuration information',
+                        action=ShowConfigAction)
 
     # Action
     parser.add_argument('--initialize', help='Write a local configuration for ants. Existing local configuration will be overwritten',
                         action=InitializeAntsAction)
     parser.add_argument(
         '-v', '--verbose', help='Run ansible pull in verbose mode', action='store_true')
-    parser.add_argument('-i', '--inventory', help='Path to your dynamic inventory script', default=inventory)
-    parser.add_argument('-w', '--wait', help = 'Wait a random interval before starting ansible-pull',
-                        action = 'store_true')
+    parser.add_argument(
+        '-i', '--inventory', help='Path to your dynamic inventory script', default=inventory)
+    parser.add_argument('-w', '--wait', help='Wait a random interval before starting ansible-pull',
+                        action='store_true')
     parser.add_argument('-d', '--destination',
-                        help = 'Set destionation for git checkout',
-                        default = DESTINATION)
-    parser.add_argument('-b', '--branch', help = 'Set active branch',
-                        default = CFG['branch'])
-    parser.add_argument('--git_repo', help = 'Set git repository',
-                        default = CFG['git_repository'])
-    parser.add_argument('--ssh_key', help = 'Path to private key',
-                        default = CFG['ssh_key'])
-    parser.add_argument('--playbook', help = 'Path to playbook file',
-                        default = CFG['ansible_playbook'])
-    parser.add_argument('--stricthostkeychecking', help = 'Enable/Disable strict host key checking for ssh.',
-                        type = str2bool, default = CFG['ssh_stricthostkeychecking'])
-    parser.add_argument('--ansible_pull_path', help = 'Path to the ansible-pull executable',
-                        default = CFG['ansible_pull_path'])
+                        help='Set destionation for git checkout',
+                        default=DESTINATION)
+    parser.add_argument('-b', '--branch', help='Set active branch',
+                        default=CFG['branch'])
+    parser.add_argument('--git_repo', help='Set git repository',
+                        default=CFG['git_repository'])
+    parser.add_argument('--ssh_key', help='Path to private key',
+                        default=CFG['ssh_key'])
+    parser.add_argument('--playbook', help='Path to playbook file',
+                        default=CFG['ansible_playbook'])
+    parser.add_argument('--stricthostkeychecking', help='Enable/Disable strict host key checking for ssh.',
+                        type=str2bool, default=CFG['ssh_stricthostkeychecking'])
+    parser.add_argument('--ansible_pull_exe', help='Path to the ansible-pull executable',
+                        default=CFG['ansible_pull_exe'])
     return parser.parse_args()
 
 

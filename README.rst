@@ -28,16 +28,30 @@ This project assumes that you are familiar with `Ansible <https://www.ansible.co
 ---------------
 Getting started
 ---------------
+*************************
+Installing ants using pip
+*************************
 - Make sure ``Git`` is installed on your machine
 - Install the latest ants client using pip: ``pip install ants_client``
+- Pip will install the ANTS client with a default configuration and put the executable in your path.
+
+******************************************
+Installing ants using macOS .pkg installer
+******************************************
+- Download the latest .pkg installer from the `releases page <https://github.com/ANTS-Framework/ants/releases>`__
+- Execute the installer. This will take care of all dependencies
+- A launch daemon will be installed, running `ants` every 15 minutes. It will trigger after the next restart.
+
+********
+Run ants
+********
+- Open your terminal
 - Start an ANTS run by typing ``ants``.
 - Wait for ANTS to finish, then open another shell. You will see the message of the day.
 
---------------
+**************
 What happened?
---------------
-Pip will install the ANTS client with a default configuration and put it in your path.
-
+**************
 Running ANTS with the default configuration will use ansible-pull to clone
 `the ANTS playbook <https://github.com/ANTS-Framework/playbook>`__ from a github repository and execute an ansible run.
 
@@ -47,6 +61,7 @@ By default, this will add a message of the day to your macOS or Linux host. Logs
 Where to go from here?
 ----------------------
 
+-------------------------
 Look at the configuration
 -------------------------
 Run ``ants -h`` to see all command line options or write your own configuration.
@@ -122,14 +137,17 @@ Communication
 -----------------------------------------------------
 Comparison of plain Ansible and Ansible Tower to ANTS
 -----------------------------------------------------
-
+****************************************
 What does ANTS do, that Ansible can not?
+****************************************
 
 - ANTS gives you a set of ready to be used roles for typical macOS and Linux host configurations.
 - ANTS let's you utilize Active Directory to map computers to roles. With all it's delegation and nesting features.
 - ANTS utilizes Ansible Pull and therefore does not require an active network connection to a central server. Roles will be locally applied even if the host is offline. 
 
+*********************************************************
 What does Ansible or Ansible Tower do that ANTS does not?
+*********************************************************
 
 - Tower has a nice Dashboard
 - Tower has a real time job output and push-button job runs

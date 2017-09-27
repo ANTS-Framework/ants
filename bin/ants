@@ -8,7 +8,7 @@ Run ansible-pull with a set of defined parameters
 and log the content of these runs.
 """
 
-__version__ = '1.2.1'
+__version__ = '1.3.2'
 
 __author__ = "Balz Aschwanden"
 __email__ = "balz.aschwanden@unibas.ch"
@@ -31,17 +31,20 @@ from antslib import configer
 CFG = configer.read_config('main')
 
 ANTS_PATH = os.path.dirname(os.path.realpath(__file__))
-DYNAMIC_INVENTORY = os.path.join(ANTS_PATH, CFG['hosts_file'])
+DYNAMIC_INVENTORY = os.path.join(ANTS_PATH, CFG['inventory_script'])
 DESTINATION = os.path.expanduser(CFG['destination'])
+_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 
 def find_file(f):
     """Search for a file in environment PATH and return first match or None"""
     paths = os.environ['PATH'].split(':')
+    paths.insert(0, _ROOT)
     for path in paths:
         file_path = os.path.join(path, f)
+        logger.console_logger.debug("Looking for %s in %s" % (f, path))
         if os.path.isfile(file_path):
-            logger.console_logger.debug("Found file at %s" % file_path)
+            logger.console_logger.debug("Found %s at %s" % (f, file_path))
             return file_path
     return None
 
@@ -89,21 +92,22 @@ def run_ansible(args):
     Documentation:
     http://docs.ansible.com/ansible/dev_guide/developing_api.html
     """
-    ansible_pull_path = args.ansible_pull_path
-    if not ansible_pull_path:
-        logger.console_logger.debug("Variable ansible_pull_path is not set. Searching in PATH.")
-        ansible_pull_path = find_file('ansible-pull')
-    if not ansible_pull_path:
+    ansible_pull_exe = args.ansible_pull_exe
+    if not ansible_pull_exe:
+        logger.console_logger.debug(
+            "Variable ansible_pull_exe is not set. Searching in PATH.")
+        ansible_pull_exe = find_file('ansible-pull')
+    if not ansible_pull_exe:
         sys.exit("Could not find executable ansible-pull. Aborting.")
-    logger.console_logger.debug("Using %s" % ansible_pull_path)
-        
-    for f in [ansible_pull_path, args.inventory]:
+    logger.console_logger.debug("Using %s" % ansible_pull_exe)
+
+    for f in [ansible_pull_exe, args.inventory]:
         if not os.path.isfile(f):
             sys.exit("Could not find file at %s. Aborting." % f)
         if not os.access(f, os.X_OK):
             sys.exit("File is not executable at %s. Aborting." % f)
 
-    cmd = [ansible_pull_path,
+    cmd = [ansible_pull_exe,
            '--clean',
            '-f',
            '-i', args.inventory,
