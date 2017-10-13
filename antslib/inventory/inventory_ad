@@ -179,7 +179,7 @@ def main():
 
         # Adding online Group after cache is written.
         # We do not want to cache this group
-        output[cfg['common_ad_bound_group']] = [fqdn]
+        output[cfg['common_ad_connected']] = [fqdn]
 
         # Printing output in Ansible JSON syntax
         print format_output(output)
