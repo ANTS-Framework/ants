@@ -99,7 +99,7 @@ def get_computer_groups(connection, search_base, computer_dn, group_prefix):
         response.pop()
         # Extracting groups from ldap response
         for group in response:
-            group_name = group['attributes']['cn']
+            group_name = group['attributes']['cn'].lower()
             # Only adding groups that start with the prefix
             if group_prefix in group_name:
                 result.append(group_name)
