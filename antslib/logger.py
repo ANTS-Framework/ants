@@ -48,11 +48,11 @@ def get_logger(name, logfile=False, maxBytes=0, formatter='default'):
 
 
 def status_file_rollover():
-    """Rotate log files for ok/changed/failed at the start of every ansible run
+    """Rotate log files at the start of every ansible run
 
 
-    Keep track of ok/changed/failed and play recap
-    on a per run basis. Hence, rotate them at the start of each run.
+    Keep track of ok/changed/failed on a per run basis.
+    Hence, rotate them at the start of each run.
 
     Code for rotation based on
     https://stackoverflow.com/questions/4654915/rotate-logfiles-each-time-the-application-is-started-python
@@ -60,8 +60,7 @@ def status_file_rollover():
     if os.path.isdir(CFG['log_dir']):
         status_files = [[ok_logger, logfile_ok],
                         [changed_logger, logfile_changed],
-                        [failed_logger, logfile_failed],
-                        [recap_logger, logfile_recap]]
+                        [failed_logger, logfile_failed]]
         for (logger, logfile) in status_files:
             if os.path.isfile(logfile):
                 console_logger.debug("Logfile rollover for file %s" % logfile)
@@ -70,7 +69,14 @@ def status_file_rollover():
 
 
 def log_recap(start_time, end_time, status_line):
-    """Log play recap in a dedicated form."""
+    """Log play recap in a dedicated form.
+
+    Rollover old logfiles befor writing.
+    """
+    if os.path.isfile(logfile_recap):
+        console_logger.debug("Logfile rollover for file %s" % logfile_recap)
+        recap_logger.handlers[0].doRollover()
+
     recap_logger.info('****PLAY TIME****')
     recap_logger.info('Start time: %s' % start_time)
     recap_logger.info('End time: %s' % end_time)
