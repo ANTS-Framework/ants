@@ -31,15 +31,15 @@ Getting started
 *************************
 Installing ants using pip
 *************************
-- Make sure ``Git`` is installed on your machine
-- Install the latest ants client using pip: ``pip install ants_client``
+- Make sure ``Git`` is installed on your machine.
+- Install the latest ants client using pip: ``pip install ants_client``.
 - Pip will install the ANTS client with a default configuration and put the executable in your path.
 
 ******************************************
 Installing ants using macOS .pkg installer
 ******************************************
-- Download the latest .pkg installer from the `releases page <https://github.com/ANTS-Framework/ants/releases/latest>`__
-- Execute the installer. This will take care of all dependencies
+- Download the latest .pkg installer from the `releases page <https://github.com/ANTS-Framework/ants/releases/latest>`__.
+- Execute the installer. This will take care of all dependencies.
 - A launch daemon will be installed, running `ants` every 15 minutes. It will trigger after the next restart.
 
 ********
@@ -53,9 +53,12 @@ Run ants
 What happened?
 **************
 Running ANTS with the default configuration will use ansible-pull to clone
-`the ANTS playbook <https://github.com/ANTS-Framework/playbook>`__ from a github repository and execute an ansible run.
+`the ANTS playbook <https://github.com/ANTS-Framework/playbook>`__ via https from a github repository and execute an ansible run.
 
 By default, this will add a message of the day to your macOS or Linux host. Logs of all the runs are stored at ``/var/log/ants``.
+
+Also by default, ants will add github to your ``known_hosts`` file. This is important for later, when you want to enable git clone
+using ssh.
 
 ----------------------
 Where to go from here?
@@ -64,10 +67,11 @@ Where to go from here?
 -------------------------
 Look at the configuration
 -------------------------
-Run ``ants -h`` to see all command line options or write your own configuration.
-
 Besides the default configuration file in the ants_client package, ANTS
 will also look for a local configuration file at ``/etc/ants/ants.cfg``.
+
+You can use ``ants --show-config`` to list the current configuration and
+``ants --initialize`` to generate a new configuration file at ``/ets/ants/ants.cfg``.
 
 Do not modify the default configuration file as it might be overwritten when updating ANTS.
 
@@ -84,7 +88,7 @@ You can use the default Ansible syntax. You can also use wildcards. Have a look 
 -----------------------------------------
 Add ssh authentication to your repository
 -----------------------------------------
-Ansible-pull cat clone a git repository using ssh. You can enable this by creating your own private playbook,
+Ansible-pull can clone a git repository using ssh. You can enable this by creating your own private playbook,
 adding ssh authentication and a read only ssh key to the repository.
 Configure ANTS to use that key.
 
@@ -92,7 +96,8 @@ By default, ANTS will look for a private key at ``/etc/ants/id_ants``
 
 You can generate a key with ``ssh-keygen -t rsa -b 4096 -N '' -C "ants client" -f /etc/ants/id_ants``
 
-By default, ANTS is configured to run with strict host key checking disabled and will add the host key for github.com to your known_hosts file.
+By default, ANTS is configured to run with strict host key checking disabled
+and will add the host key for your repo to your ``known_hosts`` file.
 You should change this in production. To do so, add ``ssh_stricthostkeychecking = True`` to your ants.cfg
 
 ------------------------------
