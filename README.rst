@@ -38,8 +38,8 @@ Installing ants using pip
 ******************************************
 Installing ants using macOS .pkg installer
 ******************************************
-- Download the latest .pkg installer from the `releases page <https://github.com/ANTS-Framework/ants/releases/latest>`__
-- Execute the installer. This will take care of all dependencies
+- Download the latest .pkg installer from the `releases page <https://github.com/ANTS-Framework/ants/releases/latest>`__.
+- Execute the installer. This will take care of all dependencies.
 - A launch daemon will be installed, running `ants` every 15 minutes. It will trigger after the next restart.
 
 ********
@@ -53,29 +53,34 @@ Run ants
 What happened?
 **************
 Running ANTS with the default configuration will use ansible-pull to clone
-`the ANTS playbook <https://github.com/ANTS-Framework/playbook>`__ from a github repository and execute an ansible run.
+`the ANTS playbook <https://github.com/ANTS-Framework/playbook>`__ via https from a github repository and execute an ansible run.
 
 By default, this will generate ``/etc/motd`` to add a message of the day to your macOS or Linux host.
 Logs of all the runs are stored at ``/var/log/ants``.
+
+Also by default, ants will add github to your ``known_hosts`` file. This is important for later, when you want to enable git clone
+using ssh.
 
 ----------------------
 Where to go from here?
 ----------------------
 
-*************************
-Look at the configuration
-*************************
+*******************
+Look at the options
+*******************
 Run ``ants -h`` to see all command line options.
-
-Run ``ants --show-config`` to see the active configuration.
 
 ****************************
 Write your own configuration
 ****************************
+Run ``ants --show-config`` to see the active configuration.
+
 Run ``ants --initialize`` to write your own configuration.
 
 Your local configuration file will be saved at ``/etc/ants/ants.cfg``.
 You can also edit it using your favorite text editor.
+
+Do not modify the default configuration file as it might be overwritten when updating ANTS.
 
 ---------------
 Run other roles
@@ -98,7 +103,8 @@ By default, ANTS will look for a private key at ``/etc/ants/id_ants``
 
 You can generate a key with ``ssh-keygen -t rsa -b 4096 -N '' -C "ants client" -f /etc/ants/id_ants``
 
-By default, ANTS is configured to run with strict host key checking disabled and will add the host key for github.com to your known_hosts file.
+By default, ANTS is configured to run with strict host key checking disabled
+and will add the host key for your repo to your ``known_hosts`` file.
 You should change this in production. To do so, add ``ssh_stricthostkeychecking = True`` to your ants.cfg
 
 ------------------------------
