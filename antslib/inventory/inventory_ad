@@ -31,7 +31,8 @@ from ssl import CERT_REQUIRED
 from os import path
 from socket import gethostname
 from json import dumps
-from ldap3 import Server, Connection, Tls, NTLM
+from ldap3 import Server, Connection, Tls, NTLM, core
+from sys import exit
 
 
 from antslib import configer
@@ -44,12 +45,15 @@ def connect_to_ad(ldap_user, ldap_pw, ldap_host):
     server = Server(ldap_host, use_ssl=True, tls=tls)
     connection = Connection(server, user=ldap_user, password=ldap_pw,
                             authentication=NTLM)
-    connection.bind()
+    try:
+        connection.bind()
 
-    result = connection.result['description']
-    if result == 'success':
-        return connection
-    else:
+        result = connection.result['description']
+        if result == 'success':
+            return connection
+        else:
+            return None
+    except core.exceptions.LDAPSocketOpenError:
         return None
 
 
@@ -121,8 +125,9 @@ def write_cache(cache_file, output):
         with open(cache_file, 'w') as cache:
             for line in format_output(output):
                 cache.write(line)
-    except IOError as e:
+    except IOError as error:
         logger.console_logger.error('Error while writing cache.')
+        logger.console_logger.error(error)
         logger.console_logger.error(
             'Make sure base process has the right permissions and path exists for %s' % cache_file)
         raise
@@ -139,7 +144,6 @@ def read_cache(cache_file):
 def main():
     """Fetching groups from AD and printing them in JSON."""
     cfg = configer.read_config('ad')
-    ants_path = path.dirname(path.realpath(__file__))
     cache_file = cfg['cache_file']
 
     # Reading fully qualified host name and converting it to lower case
@@ -175,7 +179,7 @@ def main():
         try:
             write_cache(cache_file, output)
         except IOError as e:
-            sys.exit(e)
+            exit(e)
 
         # Adding online Group after cache is written.
         # We do not want to cache this group
