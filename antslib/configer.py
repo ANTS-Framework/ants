@@ -11,6 +11,8 @@ import pwd
 import grp
 import re
 
+from antslib import prefs
+
 _ROOT = os.path.abspath(os.path.dirname(__file__))
 
 
@@ -56,7 +58,10 @@ def read_config(config_section, config_file='ants.cfg'):
         print 'Ignoring system configuraiton'
         config.read([default_config])
 
-    return dict(config.items(config_section))
+    config_dict = dict(config.items(config_section))
+    prefs_dict = prefs.read_prefs(config_section)
+
+    return prefs.merge_prefs(config_dict, prefs_dict)
 
 
 def get_values(cfg, section_name):
