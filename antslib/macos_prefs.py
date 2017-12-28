@@ -1,7 +1,7 @@
-"""prefs
+"""macos_prefs
 ====================
 
-Handle parsing of configuration preference options.
+Handle parsing of macOS configuration preference options.
 
 Allows macOS configuration preferences to override
 config file options using a plist or configuration

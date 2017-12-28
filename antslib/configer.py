@@ -10,10 +10,10 @@ import os
 import pwd
 import grp
 import re
-from sys import platform
 
 try:
-    from antslib import prefs
+    from antslib import macos_prefs
+    use_macos_prefs = True
 except ImportError:
     pass
 
@@ -64,9 +64,9 @@ def read_config(config_section, config_file='ants.cfg'):
 
     config_dict = dict(config.items(config_section))
 
-    if platform == 'darwin':
-        macos_dict = prefs.read_prefs(config_section)
-        config_dict = prefs.merge_dicts(config_dict, macos_dict)
+    if use_macos_prefs:
+        macos_dict = macos_prefs.read_prefs(config_section)
+        config_dict = macos_prefs.merge_dicts(config_dict, macos_dict)
 
     return config_dict
 
