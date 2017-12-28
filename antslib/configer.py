@@ -10,8 +10,12 @@ import os
 import pwd
 import grp
 import re
+from sys import platform
 
-from antslib import prefs
+try:
+    from antslib import prefs
+except ImportError:
+    pass
 
 _ROOT = os.path.abspath(os.path.dirname(__file__))
 
@@ -59,9 +63,12 @@ def read_config(config_section, config_file='ants.cfg'):
         config.read([default_config])
 
     config_dict = dict(config.items(config_section))
-    prefs_dict = prefs.read_prefs(config_section)
 
-    return prefs.merge_prefs(config_dict, prefs_dict)
+    if platform == 'darwin':
+        macos_dict = prefs.read_prefs(config_section)
+        config_dict = prefs.merge_dicts(config_dict, macos_dict)
+
+    return config_dict
 
 
 def get_values(cfg, section_name):

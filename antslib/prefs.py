@@ -20,11 +20,10 @@ Preferences can be defined several places. Precedence is:
 # Disable them.
 # pylint: disable=E0611
 from Foundation import CFPreferencesCopyAppValue
-from PyObjCTools import Conversion
 # pylint: enable=E0611
 
 
-BUNDLE_ID = 'com.antsframework.ants'
+BUNDLE_ID = 'com.github.ants-framework'
 
 
 #####################################################
@@ -32,25 +31,22 @@ BUNDLE_ID = 'com.antsframework.ants'
 #####################################################
 
 
-def convert_prefs_dict(prefs_dict):
-    """Convert Obj-C preference dictionary to Python dictionary.
-
-    Also converts every object in dictionary to a string.
-    """
-    python_dict = Conversion.pythonCollectionFromPropertyList(prefs_dict)
-    for k in python_dict.keys():
-        python_dict[k] = str(python_dict[k])
+def convert_dict(nsdict):
+    """Generates Python dict of strings from Obj-C NSDict."""
+    python_dict = {}
+    for k in nsdict.keys():
+        python_dict[str(k)] = str(nsdict[k])
     return python_dict
 
 
-def merge_prefs(config_dict, prefs_dict):
-    """Merge config and prefs dictionaries.
+def merge_dicts(config_dict, macos_dict):
+    """Merge config and MacOS prefs dictionaries.
 
     Overwrites values in config dict if also found in prefs dict.
     """
     for item in config_dict.keys():
-        if item in prefs_dict.keys():
-            config_dict[item] = prefs_dict[item]
+        if item in macos_dict.keys():
+            config_dict[item] = macos_dict[item]
     return config_dict
 
 
@@ -64,12 +60,12 @@ def read_prefs(prefs_section):
         - /Library/Preferences/[BUNDLE_ID].plist
         - .GlobalPreferences defined at various levels (ByHost, user, system)
     """
-    pref_dict = CFPreferencesCopyAppValue(prefs_section, BUNDLE_ID)
-    if pref_dict is None:
-        pref_dict = {}
+    macos_dict = CFPreferencesCopyAppValue(prefs_section, BUNDLE_ID)
+    if macos_dict is None:
+        macos_dict = {}
     else:
-        pref_dict = convert_prefs_dict(pref_dict)
-    return pref_dict
+        macos_dict = convert_dict(macos_dict)
+    return macos_dict
 
 
 if __name__ == '__main__':
