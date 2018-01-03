@@ -7,6 +7,7 @@ PACKAGE_VERSION=1.3.6
 PAYLOAD=\
 		ants_client_virtualenv \
 		pack-script-preinstall \
+		pack-script-postinstall \
 		pack-pathd \
 		pack-Library-LaunchDaemons-ch.unibas.its.cs.ants.plist \
 		pack-Library-LaunchDaemons-ch.unibas.its.cs.ants.run-now.plist

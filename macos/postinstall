@@ -1,0 +1,22 @@
+#!/bin/bash
+
+#  ANTS pkg postinstall script
+#
+#  Creates symlinks to Apple PyObjC frameworks in ANTS
+#
+#
+#  Created by Jacob F. Grant
+#
+#  Created: 01/03/18
+#  Updated: 01/03/18
+#
+
+
+# Symlink objc library
+ln -s /System/Library/Frameworks/Python.framework/Versions/2.7/Extras/lib/python/PyObjC/objc /Library/ANTS-Framework/lib/python2.7/site-packages
+
+# Symlink Foundation library
+ln -s /System/Library/Frameworks/Python.framework/Versions/2.7/Extras/lib/python/PyObjC/Foundation /Library/ANTS-Framework/lib/python2.7/site-packages
+
+# Symlink CoreFoundation library
+ln -s /System/Library/Frameworks/Python.framework/Versions/2.7/Extras/lib/python/PyObjC/CoreFoundation /Library/ANTS-Framework/lib/python2.7/site-packages
