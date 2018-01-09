@@ -15,7 +15,7 @@ try:
     from antslib import macos_prefs
     use_macos_prefs = True
 except ImportError:
-    pass
+    use_macos_prefs = False
 
 _ROOT = os.path.abspath(os.path.dirname(__file__))
 
