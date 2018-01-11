@@ -122,7 +122,7 @@ def run_ansible(args):
     else:
         logger.console_logger.debug("No key found at %s" % args.ssh_key)
     if args.verbose:
-        cmd.append('-v')
+        cmd.append('-%s' % ('v' * args.verbose))
     if not args.stricthostkeychecking:
         logger.console_logger.debug(
             "Strict host key checking for ansible-pull is disabled.")
