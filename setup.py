@@ -43,7 +43,10 @@ setuptools.setup(
     ],
     keywords='client antsFramework ansible ansiblePull unibas',
     packages=['antslib', 'antslib.inventory'],
-    install_requires=['ansible', 'ldap3'],
+    install_requires=[
+        'ansible==2.4.2.0',
+        'ldap3==2.4',
+    ],
     package_data={
         'antslib': ['etc/ants.cfg'],
         'antslib.inventory': ['inventory_default', 'inventory_ad'],
