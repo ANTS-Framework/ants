@@ -11,6 +11,12 @@ import pwd
 import grp
 import re
 
+try:
+    from antslib import macos_prefs
+    use_macos_prefs = True
+except ImportError:
+    use_macos_prefs = False
+
 _ROOT = os.path.abspath(os.path.dirname(__file__))
 
 
@@ -56,7 +62,13 @@ def read_config(config_section, config_file='ants.cfg'):
         print 'Ignoring system configuraiton'
         config.read([default_config])
 
-    return dict(config.items(config_section))
+    config_dict = dict(config.items(config_section))
+
+    if use_macos_prefs:
+        macos_dict = macos_prefs.read_prefs(config_section)
+        config_dict = macos_prefs.merge_dicts(config_dict, macos_dict)
+
+    return config_dict
 
 
 def get_values(cfg, section_name):
