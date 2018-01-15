@@ -205,6 +205,10 @@ def parse_args(version, LOG_RECAP, DESTINATION, CFG):
                         type=str2bool, default=CFG['ssh_stricthostkeychecking'])
     parser.add_argument('--ansible_pull_exe', help='Path to the ansible-pull executable',
                         default=CFG['ansible_pull_exe'])
+    parser.add_argument('--tags', help='List of tags to be executed. (Comma separated)',
+                        default=CFG['tags'])
+    parser.add_argument('--skip-tags', help='List of tags to be skipped. (Comma separated)',
+                       default=CFG['skip_tags'])
 
     # Parse arguments
     return parser.parse_args()
