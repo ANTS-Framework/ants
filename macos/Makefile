@@ -21,7 +21,7 @@ setup_virtualenv:
 	@sudo mkdir -p ${WORK_D}${ANTS_LIB}
 	@sudo /usr/local/bin/pip install virtualenv
 	@sudo /usr/local/bin/virtualenv ${WORK_D}${ANTS_LIB}
-	@sudo ${WORK_D}${ANTS_LIB}/bin/pip install ants_client
+	@sudo ${WORK_D}${ANTS_LIB}/bin/pip install ants_client --pre
 	@sudo find ${WORK_D} -name "*.pyc" -exec rm -rf {} \;
 
 fix_venv_path: setup_virtualenv
@@ -52,4 +52,4 @@ pack-pathd: l_pathd
 
 ants_client:
 	# Install ants_client to system python
-	@sudo /usr/local/bin/pip install --root ${WORK_D} -I ants_client
+	@sudo /usr/local/bin/pip install --root ${WORK_D} -I ants_client --pre
