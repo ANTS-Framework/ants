@@ -8,7 +8,7 @@ Run ansible-pull with a set of defined parameters
 and log the content of these runs.
 """
 
-__version__ = '1.3.6'
+__version__ = '1.4'
 
 __author__ = "Balz Aschwanden"
 __email__ = "balz.aschwanden@unibas.ch"
@@ -115,23 +115,35 @@ def run_ansible(args):
            '-U', args.git_repo,
            '-C', args.branch,
            args.playbook]
+
     if os.path.isfile(args.ssh_key):
         logger.console_logger.debug("Found ssh key at %s" % args.ssh_key)
         cmd.append('--private-key')
         cmd.append(args.ssh_key)
     else:
         logger.console_logger.debug("No key found at %s" % args.ssh_key)
+
     if args.verbose:
-        cmd.append('-v')
+        cmd.append('-%s' % ('v' * args.verbose))
+
     if not args.stricthostkeychecking:
         logger.console_logger.debug(
             "Strict host key checking for ansible-pull is disabled.")
         cmd.append('--accept-host-key')
+
     if args.wait:
         logger.console_logger.debug(
             "Running ansible-pull with a random wait intervall of %s sec" % CFG['wait_interval'])
         cmd.append('-s')
         cmd.append(CFG['wait_interval'])
+
+    if args.tags:
+        cmd.append('--tags')
+        cmd.append(args.tags)
+
+    if args.skip_tags:
+        cmd.append('--skip-tags')
+        cmd.append(args.skip_tags)
 
     proc = subprocess.Popen(cmd, bufsize=1, stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE)
