@@ -99,14 +99,13 @@ def get_computer_groups(connection, search_base, computer_dn, group_prefix):
                       attributes=['cn'])
     response = connection.response
     if response:
-        # Removing LDAP string from last line
-        response.pop()
         # Extracting groups from ldap response
         for group in response:
             group_name = group['attributes']['cn'].lower()
             # Only adding groups that start with the prefix
             if group_name.startswith(group_prefix):
-                result.append(group_name)
+                if not group_name in result:
+                    result.append(group_name)
     return result
 
 
