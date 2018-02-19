@@ -178,7 +178,8 @@ def main():
         try:
             write_cache(cache_file, output)
         except IOError as e:
-            exit(e)
+            logger.console_logger.error('Error while writing cache at %s.' % cache_file)
+            pass
 
         # Adding online Group after cache is written.
         # We do not want to cache this group
