@@ -197,7 +197,7 @@ def main():
         else:
             # Printing default group
             output = dict()
-            output['common'] = [fqdn]
+            output[cfg['common_group']] = [fqdn]
             print format_output(output)
 
 
