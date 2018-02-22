@@ -156,6 +156,8 @@ def __main__():
                                 DESTINATION, CFG)
     if args.verbose:
         logger.console_logger.setLevel(logger.logging.DEBUG)
+    if args.quiet:
+        logger.console_logger.disabled = True
     if not configer.is_root():
         sys.exit('Script must be run as root')
     logger.console_logger.debug("Running ansible-pull in verbose mode")
