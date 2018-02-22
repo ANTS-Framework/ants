@@ -182,6 +182,8 @@ def parse_args(version, LOG_RECAP, DESTINATION, CFG):
     # Actions
     parser.add_argument('--initialize', help='Write a local configuration for ants. Existing local configuration will be overwritten',
                         action=InitializeAntsAction)
+    parser.add_argument(
+        '--refresh', help='Delete the local git repo to force a git clone by ansible-pull.', action='store_true')
 
     # Options for ansible pull
     parser.add_argument(
