@@ -165,14 +165,15 @@ def __main__():
     logger.status_file_rollover()
 
     if args.refresh:
-        msg = "Deleting local git repo at %s" % args.destination
-        logger.console_logger.info(msg)
-        logger.logfile_logger.info(msg)
-        try:
-            shutil.rmtree(args.destination)
-        except OSError as error:
-            logger.console_logger.error(error)
-            raise
+        if os.path.exists(args.destination):
+            msg = "Deleting local git repo at %s" % args.destination
+            logger.console_logger.info(msg)
+            logger.logfile_logger.info(msg)
+            try:
+                shutil.rmtree(args.destination)
+            except OSError as error:
+                logger.console_logger.error(error)
+                raise
 
     run_ansible(args)
 
