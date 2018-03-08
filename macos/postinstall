@@ -8,15 +8,19 @@
 #  Created by Jacob F. Grant
 #
 #  Created: 01/03/18
-#  Updated: 01/03/18
+#  Updated: 03/08/18
 #
 
 
 # Symlink objc library
-ln -s /System/Library/Frameworks/Python.framework/Versions/2.7/Extras/lib/python/PyObjC/objc /Library/ANTS-Framework/lib/python2.7/site-packages
+libraries=(
+    objc
+    Foundation
+    CoreFoundation
+)
 
-# Symlink Foundation library
-ln -s /System/Library/Frameworks/Python.framework/Versions/2.7/Extras/lib/python/PyObjC/Foundation /Library/ANTS-Framework/lib/python2.7/site-packages
-
-# Symlink CoreFoundation library
-ln -s /System/Library/Frameworks/Python.framework/Versions/2.7/Extras/lib/python/PyObjC/CoreFoundation /Library/ANTS-Framework/lib/python2.7/site-packages
+for lib in "${libraries[@]}";do
+    if [ ! -e "/Library/ANTS-Framework/lib/python2.7/site-packages/$lib" ];then
+        ln -s "/System/Library/Frameworks/Python.framework/Versions/2.7/Extras/lib/python/PyObjC/$lib" "/Library/ANTS-Framework/lib/python2.7/site-packages/$lib"
+    fi
+done
