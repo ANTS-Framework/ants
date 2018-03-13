@@ -8,7 +8,7 @@ Run ansible-pull with a set of defined parameters
 and log the content of these runs.
 """
 
-__version__ = '1.4.1rc3'
+__version__ = '1.4.1'
 
 __author__ = "Balz Aschwanden"
 __email__ = "balz.aschwanden@unibas.ch"
