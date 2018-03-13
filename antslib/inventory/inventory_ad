@@ -99,14 +99,13 @@ def get_computer_groups(connection, search_base, computer_dn, group_prefix):
                       attributes=['cn'])
     response = connection.response
     if response:
-        # Removing LDAP string from last line
-        response.pop()
         # Extracting groups from ldap response
         for group in response:
             group_name = group['attributes']['cn'].lower()
             # Only adding groups that start with the prefix
             if group_name.startswith(group_prefix):
-                result.append(group_name)
+                if not group_name in result:
+                    result.append(group_name)
     return result
 
 
@@ -126,8 +125,7 @@ def write_cache(cache_file, output):
             for line in format_output(output):
                 cache.write(line)
     except IOError as error:
-        logger.console_logger.error('Error while writing cache.')
-        logger.console_logger.error(error)
+        logger.console_logger.error('Error while writing cache: %s' % error)
         logger.console_logger.error(
             'Make sure base process has the right permissions and path exists for %s' % cache_file)
         raise
@@ -179,7 +177,7 @@ def main():
         try:
             write_cache(cache_file, output)
         except IOError as e:
-            exit(e)
+            pass
 
         # Adding online Group after cache is written.
         # We do not want to cache this group
@@ -198,7 +196,7 @@ def main():
         else:
             # Printing default group
             output = dict()
-            output['common'] = [fqdn]
+            output[cfg['common_group']] = [fqdn]
             print format_output(output)
 
 

@@ -182,10 +182,14 @@ def parse_args(version, LOG_RECAP, DESTINATION, CFG):
     # Actions
     parser.add_argument('--initialize', help='Write a local configuration for ants. Existing local configuration will be overwritten',
                         action=InitializeAntsAction)
+    parser.add_argument(
+        '--refresh', help='Delete the local git repo to force a git clone by ansible-pull.', action='store_true')
 
     # Options for ansible pull
     parser.add_argument(
         '-v', '--verbose', help='Run ansible pull in verbose mode', action='count')
+    parser.add_argument(
+        '-q', '--quiet', help='Quiet mote. Do not print information to console', action='store_true')
     parser.add_argument(
         '-i', '--inventory', help='Path to your dynamic inventory script', default=inventory)
     parser.add_argument('-w', '--wait', help='Wait a random interval before starting ansible-pull',
@@ -208,7 +212,7 @@ def parse_args(version, LOG_RECAP, DESTINATION, CFG):
     parser.add_argument('--tags', help='List of tags to be executed. (Comma separated)',
                         default=CFG['tags'])
     parser.add_argument('--skip-tags', help='List of tags to be skipped. (Comma separated)',
-                       default=CFG['skip_tags'])
+                        default=CFG['skip_tags'])
 
     # Parse arguments
     return parser.parse_args()

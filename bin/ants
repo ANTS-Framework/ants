@@ -8,7 +8,7 @@ Run ansible-pull with a set of defined parameters
 and log the content of these runs.
 """
 
-__version__ = '1.4'
+__version__ = '1.4.1'
 
 __author__ = "Balz Aschwanden"
 __email__ = "balz.aschwanden@unibas.ch"
@@ -20,6 +20,7 @@ __license__ = "GPL"
 
 import os
 import sys
+import shutil
 import subprocess
 import datetime
 
@@ -156,10 +157,27 @@ def __main__():
                                 DESTINATION, CFG)
     if args.verbose:
         logger.console_logger.setLevel(logger.logging.DEBUG)
+    if args.quiet:
+        logger.console_logger.disabled = True
     if not configer.is_root():
         sys.exit('Script must be run as root')
     logger.console_logger.debug("Running ansible-pull in verbose mode")
     logger.status_file_rollover()
+
+    if args.refresh:
+        if os.path.exists(args.destination):
+            msg = "Deleting local git repo at %s" % args.destination
+            logger.console_logger.info(msg)
+            logger.logfile_logger.info('************************************************************************')
+            logger.logfile_logger.info('Running ants client in refresh mode')
+            logger.logfile_logger.info(msg)
+            logger.logfile_logger.info('************************************************************************')
+            try:
+                shutil.rmtree(args.destination)
+            except OSError as error:
+                logger.console_logger.error(error)
+                raise
+
     run_ansible(args)
 
 
