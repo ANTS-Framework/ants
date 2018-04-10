@@ -8,7 +8,6 @@ Handle parsing of configuraiton file options.
 import ConfigParser
 import os
 import pwd
-import grp
 import re
 
 try:
@@ -28,11 +27,7 @@ def is_root():
 
 
 def create_dir(dir_name):
-    """Create directory
-
-    Use pwd and grp to get uid/gid.
-    https://stackoverflow.com/questions/5994840/how-to-change-the-user-and-group-permissions-for-a-directory-by-name
-    """
+    """Create directory"""
     uid = os.getuid()
     gid = os.getgid()
     os.mkdir(dir_name, 0755)
