@@ -58,6 +58,8 @@ class ShowConfigAction(argparse.Action):
               self).__init__(option_strings, dest, nargs=0, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
+        if not configer.is_root():
+            sys.exit('Script must be run as root')
         cfg_sections = ['main', 'ad']
         for section in cfg_sections:
             sys.stdout.write('[%s]\n' % (section))
