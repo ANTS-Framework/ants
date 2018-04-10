@@ -194,6 +194,8 @@ def parse_args(version, LOG_RECAP, DESTINATION, CFG):
         '-i', '--inventory', help='Path to your dynamic inventory script', default=inventory)
     parser.add_argument('-w', '--wait', help='Wait a random interval before starting ansible-pull',
                         action='store_true')
+    parser.add_argument('--check', help='Do not make any changes but try to predict changes that may occur',
+                        action='store_true'),
     parser.add_argument('-d', '--destination',
                         help='Set destionation for git checkout',
                         default=DESTINATION)

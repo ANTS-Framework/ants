@@ -127,6 +127,9 @@ def run_ansible(args):
     if args.verbose:
         cmd.append('-%s' % ('v' * args.verbose))
 
+    if args.check:
+        cmd.append('--check')
+
     if not args.stricthostkeychecking:
         logger.console_logger.debug(
             "Strict host key checking for ansible-pull is disabled.")
@@ -168,10 +171,12 @@ def __main__():
         if os.path.exists(args.destination):
             msg = "Deleting local git repo at %s" % args.destination
             logger.console_logger.info(msg)
-            logger.logfile_logger.info('************************************************************************')
+            logger.logfile_logger.info(
+                '************************************************************************')
             logger.logfile_logger.info('Running ants client in refresh mode')
             logger.logfile_logger.info(msg)
-            logger.logfile_logger.info('************************************************************************')
+            logger.logfile_logger.info(
+                '************************************************************************')
             try:
                 shutil.rmtree(args.destination)
             except OSError as error:
