@@ -27,14 +27,14 @@ def is_root():
     return False
 
 
-def create_dir(dir_name, user='root', group='wheel'):
+def create_dir(dir_name):
     """Create directory
 
     Use pwd and grp to get uid/gid.
     https://stackoverflow.com/questions/5994840/how-to-change-the-user-and-group-permissions-for-a-directory-by-name
     """
-    uid = pwd.getpwnam(user).pw_uid
-    gid = grp.getgrnam(group).gr_gid
+    uid = os.getuid()
+    gid = os.getgid()
     os.mkdir(dir_name, 0755)
     os.chown(dir_name, uid, gid)
 
