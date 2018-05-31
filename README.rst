@@ -155,6 +155,17 @@ Nothing. You just set up a configuration management that communicates savely ove
 
 No additional infrastructure and no AD binding required.
 
+-------
+Testing
+-------
+You made changes to the ANTS code or you want to test a feature that hasn't been released yet? This is
+what you should do:
+
+If what you're looking for is already available in pypi as a pre-release, you can simply install it
+by telling pip to include pre-releases in its search: ``pip install ants_client --pre``
+
+If you made local changes to your code and want to test them, you can set up a `virtual environment <https://virtualenv.pypa.io/en/stable/>`__, `activate it <https://virtualenv.pypa.io/en/stable/userguide/#activate-script>`__ and install your code locally using ``pip install -e <path_to_ants>``.
+
 -------------
 Communication
 -------------
