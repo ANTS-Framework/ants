@@ -15,7 +15,7 @@ ANTS is a framework to manage and apply macOS and Linux host configurations usin
 The ANTS Framework is developed by the Client Services Team of the `University of Basel <https://www.unibas.ch/>`__ `IT Services <https://its.unibas.ch>`__
 and released under the `GNU General Public License Version 3 <https://www.gnu.org/licenses/gpl-3.0.en.html>`__.
 
-`Ansible <https://docs.ansible.com/ansible/latest/index.html>`__ is a trademark of `Red Hat, Inc. <https://www.redhat.com>`__.
+`Ansible <https://docs.ansible.com/ansible/latest/index.html>`__ is a trademark of `Red Hat, Inc. <https://www.redhat.com>`__
 
 ------------
 Introduction
@@ -48,7 +48,7 @@ Installing ants using macOS .pkg installer
 ******************************************
 - Download the latest .pkg installer from the `releases page <https://github.com/ANTS-Framework/ants/releases/latest>`__.
 - Execute the installer. This will take care of all dependencies.
-- A launch daemon will be installed, running `ants` every 15 minutes. It will trigger after the next restart.
+- A launch daemon will be installed, running ``ants`` every 15 minutes. It will trigger after the next restart.
 
 ********
 Run ants
@@ -92,6 +92,7 @@ Do not modify the default configuration file as it might be overwritten when upd
 
 On Mac OS, you can also configure ANTS with a preference list (plist) or configuration profile.
 Please note that configurations set in this manner will override any other configuration, including ``ants.cfg``.
+Go `here <https://github.com/ANTS-Framework/ants/blob/Update_readme/macos/ANTS_Config_Profile.xml>`__ for an example configuration profile.
 
 ---------------
 Run other roles
@@ -116,7 +117,7 @@ You can generate a key with ``ssh-keygen -t rsa -b 4096 -N '' -C "ants client" -
 
 By default, ANTS is configured to run with strict host key checking disabled
 and will add the host key for your repo to your ``known_hosts`` file.
-You should change this in production. To do so, add ``ssh_stricthostkeychecking = True`` to your ants.cfg
+**You should change this in production.** To do so, add ``ssh_stricthostkeychecking = True`` to your ants.cfg
 
 ------------------------------
 Add a dynamic inventory source
@@ -125,7 +126,7 @@ Ansible supports dynamic inventory scripts. (A json representation of hosts to g
 
 You can use scripts to tell ansible-pull which tasks to run on which host.
 You need an inventory source and a script that can read and return it in the
-`correct format: <http://docs.ansible.com/ansible/latest/dev_guide/developing_inventory.html>`__
+`correct format <http://docs.ansible.com/ansible/latest/dev_guide/developing_inventory.html>`__.
 
 By default, ANTS will run a dummy script ``inventory_default`` that will just return your hostname belonging to a group
 named *ants-common*. You can edit ``main.yml`` straight away and assign roles using host names. But
@@ -154,6 +155,27 @@ What else do I need
 Nothing. You just set up a configuration management that communicates savely over ssh using your AD and Github.
 
 No additional infrastructure and no AD binding required.
+
+--------------------------
+Add your own inventor file
+--------------------------
+
+You can add your own inventory file. This can be a `dynamic inventory source <http://docs.ansible.com/ansible/latest/dev_guide/developing_inventory.html>`__ or a `static file <https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html#hosts-and-groups>`__. By default, ANTS will look for the inventory file in its python package. This is useful because it enables you to use inventory scripts like ``inventory_ad`` without having to specify the full path. However, if you would
+like to place your inventory file somewhere else you're free to do so. All you have to do is use an absolute path in ``ants.cfg``.
+
+The following entry in ``ants.cfg`` will look for your inventory file in the ANTS python package. This is useful for everything that comes with the ANTS installation:
+
+.. code-block::
+
+    [main]
+    inventory_script = inventory_ad
+
+This entry on the other hand will look for your inventory file in ``/etc/ants``:
+
+.. code-block::
+
+    [main]
+    inventory_script = /etc/ants/myinventory
 
 -------
 Testing
