@@ -92,6 +92,7 @@ Do not modify the default configuration file as it might be overwritten when upd
 
 On Mac OS, you can also configure ANTS with a preference list (plist) or configuration profile.
 Please note that configurations set in this manner will override any other configuration, including ``ants.cfg``.
+Go `here <https://github.com/ANTS-Framework/ants/blob/Update_readme/macos/ANTS_Config_Profile.xml>`__ for an example configuration profile.
 
 ---------------
 Run other roles
