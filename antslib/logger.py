@@ -68,7 +68,7 @@ def status_file_rollover():
     return
 
 
-def log_recap(start_time, end_time, status_line):
+def log_recap(start_time, end_time, status_line, rc):
     """Log play recap in a dedicated form.
 
     Rollover old logfiles befor writing.
@@ -82,8 +82,13 @@ def log_recap(start_time, end_time, status_line):
     recap_logger.info('End time: %s' % end_time)
     recap_logger.info('Total: %s' % (end_time - start_time))
     recap_logger.info('****PLAY RECAP****')
-    recap_logger.info(status_line.rstrip())
-    recap_logger.info('Client status: %s' % parse_client_status(status_line))
+    if rc != 0 or not status_line:
+        recap_logger.info('Ansible-pull return code: %s' % rc)
+        recap_logger.info('Client status: failed')
+    else:
+        recap_logger.info(status_line.rstrip())
+        recap_logger.info('Client status: %s' %
+                          parse_client_status(status_line))
     return
 
 
