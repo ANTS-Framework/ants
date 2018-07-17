@@ -8,7 +8,7 @@ Run ansible-pull with a set of defined parameters
 and log the content of these runs.
 """
 
-__version__ = '1.5.1rc1'
+__version__ = '1.5.1rc3'
 
 __author__ = "Balz Aschwanden"
 __email__ = "balz.aschwanden@unibas.ch"
@@ -51,7 +51,7 @@ def find_file(f):
 
 
 def parse_proc(proc):
-    """Read subprocess output and dispatch it to logger.
+    """Read subprocess output and dispatch it to logger. Return rc of process.
 
 
     Cases handled separately:
@@ -75,14 +75,16 @@ def parse_proc(proc):
             recap_line = line
         get_recap = bool(line.startswith('PLAY RECAP'))
 
+    # https://stackoverflow.com/questions/37942022/returncode-of-popen-object-is-none-after-the-process-is-terminated
+    proc.stdout.close()
+    rc = proc.wait()
     end_run_time = datetime.datetime.now()
-    if recap_line is not None:
-        logger.log_recap(start_run_time, end_run_time, recap_line)
-    return
+    logger.log_recap(start_run_time, end_run_time, recap_line, rc)
+    return rc
 
 
 def run_ansible(args):
-    """Run ansible-pull.
+    """Run ansible-pull and return rc of subprocess.
 
 
     The ansible python api is provided as is and the core team
@@ -157,8 +159,7 @@ def run_ansible(args):
 
     proc = subprocess.Popen(cmd, bufsize=1, stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE)
-    parse_proc(proc)
-    return proc.poll()
+    return parse_proc(proc)
 
 
 def __main__():
