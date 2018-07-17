@@ -75,9 +75,9 @@ def parse_proc(proc):
             recap_line = line
         get_recap = bool(line.startswith('PLAY RECAP'))
 
-    # Check if process has terminated
-    proc.poll()
-    rc = proc.returncode
+    # https://stackoverflow.com/questions/37942022/returncode-of-popen-object-is-none-after-the-process-is-terminated
+    proc.stdout.close()
+    rc = proc.wait()
     end_run_time = datetime.datetime.now()
     logger.log_recap(start_run_time, end_run_time, recap_line, rc)
     return rc
