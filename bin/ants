@@ -93,7 +93,7 @@ def run_ansible(args):
     Hence, we call the cli directly and do not attempt to work with the api.
 
     Documentation:
-    http://docs.ansible.com/ansible/dev_guide/developing_api.html
+    https://docs.ansible.com/ansible/latest/dev_guide/developing_api.html
     """
     ansible_pull_exe = args.ansible_pull_exe
     if not ansible_pull_exe:
