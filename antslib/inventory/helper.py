@@ -18,8 +18,8 @@ import socket
 
 
 def get_hostname():
-    """Return FQDN for this host in lower case."""
-    return socket.gethostname().lower()
+    """Return FQDN for this host."""
+    return socket.gethostname()
 
 
 def get_simple_hostname(fqdn):
