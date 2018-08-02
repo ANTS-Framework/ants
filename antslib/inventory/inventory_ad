@@ -3,13 +3,12 @@
 """inventory_ad
 ===============
 
-
 This script is an Ansible Dynamic Inventory script. It takes the host name of a
 client, searches for it in MS Active Directory and returns it's groups. The
 groups are filtered by prefix and Active Directory Organizational Unit.
 
 This script returns the group and hostname in an Ansible compatible JSON
-format.  The script writes an offline cache file for later use if the Active
+format. The script writes an offline cache file for later use if the Active
 Directory query succeeds. This cache is returned if the Active Directory query
 fails.
 
@@ -18,7 +17,6 @@ common-ad-bound if the result comes from an online query rather than from the
 cache.
 """
 
-
 __author__ = "Jan Welker"
 __email__ = "jan.welker@unibas.ch"
 __copyright__ = "Copyright 2017, University of Basel"
@@ -26,15 +24,11 @@ __copyright__ = "Copyright 2017, University of Basel"
 __credits__ = ["Balz Aschwanden", "Jan Welker"]
 __license__ = "GPL"
 
-
 from ssl import CERT_REQUIRED
 from os import path
 from socket import gethostname
 from json import dumps
 from ldap3 import Server, Connection, Tls, NTLM, core
-from sys import exit
-
-
 from antslib import configer
 from antslib import logger
 
@@ -70,7 +64,8 @@ def host_exist_in_ad(connection, simple_hostname, ldap_ou):
                       attributes=['cn'])
     try:
         response = connection.response[0]['attributes']['cn']
-    except KeyError:
+    except KeyError as error:
+        logger.logfile_logger.info('Host %s not found in %s: %s' % (simple_hostname, ldap_ou, error))
         response = ''
 
     return bool(response)
@@ -82,13 +77,15 @@ def get_computer_dn(connection, simple_hostname, ldap_ou):
                       attributes=['distinguishedName'])
     try:
         response = connection.response[0]['attributes']['distinguishedName']
-    except KeyError:
+    except KeyError as error:
+        logger.logfile_logger.info('DN of %s not found in %s: %s'
+                                   % simple_hostname, ldap_ou, error)
         response = ''
     return response
 
 
 def get_computer_groups(connection, search_base, computer_dn, group_prefix):
-    """Receive groups that the computer object is a member off.
+    """Receive groups that the computer object is a member of.
     member:1.2.840.113556.1.4.1941:=%s is a special Active Directory OID that
     returns nested groups and not just the first level. The result is filtered
     by group prefix and Organizational Unit """
@@ -101,11 +98,14 @@ def get_computer_groups(connection, search_base, computer_dn, group_prefix):
     if response:
         # Extracting groups from ldap response
         for group in response:
-            group_name = group['attributes']['cn'].lower()
-            # Only adding groups that start with the prefix
-            if group_name.startswith(group_prefix):
-                if not group_name in result:
-                    result.append(group_name)
+            try:
+                group_name = group['attributes']['cn'].lower()
+                # Only adding groups that start with the prefix
+                if group_name.startswith(group_prefix):
+                    if not group_name in result:
+                        result.append(group_name)
+            except KeyError:
+                logger.logfile_logger.info('No groups found for %s in %s with preffix %s' % (computer_dn, search_base, group_prefix))
     return result
 
 
@@ -126,8 +126,7 @@ def write_cache(cache_file, output):
                 cache.write(line)
     except IOError as error:
         logger.console_logger.error('Error while writing cache: %s' % error)
-        logger.console_logger.error(
-            'Make sure base process has the right permissions and path exists for %s' % cache_file)
+        logger.console_logger.error('Make sure the base process has the right permissions and path exists for %s' % cache_file)
         raise
 
 
@@ -145,14 +144,15 @@ def main():
     cache_file = cfg['cache_file']
 
     # Reading fully qualified host name and converting it to lower case
-    fqdn = gethostname().lower()
-    simple_host_name = get_simple_host_name(fqdn)
+    fqdn = gethostname()
+    simple_host_name = get_simple_host_name(fqdn.lower())
 
     # Connecting to Active Directory and check connection status
     ad_connection = connect_to_ad(
         cfg['ldap_user'], cfg['ldap_pw'], cfg['ldap_host'])
     online = bool(ad_connection)
     if online:
+        logger.logfile_logger.info('Using online results from AD')
         # Initializing output
         output = dict()
         output[cfg['common_group']] = [fqdn]
@@ -176,8 +176,8 @@ def main():
         # Writing output to cache file
         try:
             write_cache(cache_file, output)
-        except IOError as e:
-            pass
+        except IOError as error:
+            logger.console_logger.error('Error while writing cache: %s' % error)
 
         # Adding online Group after cache is written.
         # We do not want to cache this group
@@ -188,6 +188,7 @@ def main():
 
     # We are not bound to AD we are offline
     else:
+        logger.logfile_logger.info('Using cached results from AD')
         # Reading cache file
         cached_output = read_cache(cache_file)
         if cached_output:
