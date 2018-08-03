@@ -60,7 +60,7 @@ class ShowConfigAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
         if not configer.is_root():
             sys.exit('Script must be run as root')
-        cfg_sections = ['main', 'ad']
+        cfg_sections = ['main', 'ad', 'logstash']
         for section in cfg_sections:
             sys.stdout.write('[%s]\n' % (section))
             c = configer.read_config(section)

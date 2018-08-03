@@ -7,7 +7,6 @@ Handle parsing of configuraiton file options.
 
 import ConfigParser
 import os
-import pwd
 import re
 
 try:
@@ -88,8 +87,11 @@ def get_config():
     """
     cfg_main = get_values(read_config('main'), 'main')
     cfg_ad = None
+    cfg_logstash = None
     if cfg_main['inventory_script'] == 'inventory_ad':
         cfg_ad = get_values(read_config('ad'), 'ad')
+    if 'logstash' in cfg_main['ansible_callback_whitelist']:
+        cfg_logstash = get_values(read_config('logstash'), 'logstash')
 
     config = ConfigParser.ConfigParser()
     config.add_section('main')
@@ -99,6 +101,10 @@ def get_config():
         config.add_section('ad')
         for key, value in cfg_ad.iteritems():
             config.set('ad', key, value)
+    if cfg_logstash:
+        config.add_section('logstash')
+        for key, value in cfg_ad.iteritems():
+            config.set('logstash', key, value)
     return config
 
 

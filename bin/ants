@@ -156,6 +156,11 @@ def run_ansible(args):
     if args.skip_tags:
         cmd.append('--skip-tags')
         cmd.append(args.skip_tags)
+    if configer.read_config('logstash'):
+        cfg_logstash = configer.read_config('logstash')
+        os.environ['ANSIBLE_CALLBACK_WHITELIST'] = CFG['ansible_callback_whitelist']
+        os.environ['LOGSTASH_SERVER'] = cfg_logstash['logstash_server']
+        os.environ['LOGSTASH_PORT'] = cfg_logstash['logstash_port']
 
     proc = subprocess.Popen(cmd, bufsize=1, stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE)
