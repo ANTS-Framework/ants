@@ -46,7 +46,7 @@ setuptools.setup(
     install_requires=[
         'ansible==2.6.1',
         'ldap3==2.5',
-        'logstash==0.1.dev0',
+        'python-logstash==0.4.6',
     ],
     package_data={
         'antslib': ['etc/ants.cfg'],
