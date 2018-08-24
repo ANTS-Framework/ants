@@ -87,11 +87,12 @@ def get_config():
     """
     cfg_main = get_values(read_config('main'), 'main')
     cfg_ad = None
-    cfg_logstash = None
+    cfg_callback_plugins = None
     if cfg_main['inventory_script'] == 'inventory_ad':
         cfg_ad = get_values(read_config('ad'), 'ad')
-    if 'logstash' in cfg_main['ansible_callback_whitelist']:
-        cfg_logstash = get_values(read_config('logstash'), 'logstash')
+    if cfg_main['ansible_callback_whitelist']:
+        cfg_callback_plugins = get_values(read_config('callback_plugins'),
+                                          'callback_plugins')
 
     config = ConfigParser.ConfigParser()
     config.add_section('main')
@@ -101,15 +102,16 @@ def get_config():
         config.add_section('ad')
         for key, value in cfg_ad.iteritems():
             config.set('ad', key, value)
-    if cfg_logstash:
-        config.add_section('logstash')
+    if cfg_callback_plugins:
+        config.add_section('callback_plugins')
         for key, value in cfg_ad.iteritems():
-            config.set('logstash', key, value)
+            config.set('callback_plugins', key, value)
     return config
 
 
 def write_config(config, config_file='ants.cfg'):
-    """Writing ConfigParser object to local configuration. Existing files will be overwritten."""
+    """Writing ConfigParser object to local configuration.
+    Existing files will be overwritten."""
     config_path = '/etc/ants/'
     system_config = os.path.join(config_path, config_file)
     if not os.path.isdir(config_path):
