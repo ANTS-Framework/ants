@@ -183,7 +183,7 @@ Reporting
 You can log the run results into your Logstash instance. Just add the following entries to the config file ``/etc/ants``.
 ``ansible_callback_whitelist = logstash`` and add a new section called ``[callback_plugins]``. This section should contain the ``LOGSTASH_SERVER`` and the ``LOGSTASH_PORT``. The defaults of the Logstash callback plugin are applied if you do not set these settings.
 
-You can add other callback plugins to ``ansible_callback_whitelist`` if you desire. The same is true from ``[callback_plugins]``. Just add environment variables to that sub section. 
+You can add other callback plugins to ``ansible_callback_whitelist`` if you desire. The same is true to ``[callback_plugins]``. Just add environment variables to that sub section. 
 
 Please note that the casing of the environment variables is essential for the callback plugins to work. The casing can be found using ``ansible-doc -t callback logstash $name_of_plugin``.
 
