@@ -178,7 +178,7 @@ This entry on the other hand will look for your inventory file in ``/etc/ants``:
     inventory_script = /etc/ants/myinventory
 
 ---------------------
-Reporting
+Callback plugins and reporting
 ---------------------
 You can log the run results into your Logstash instance. Just add the following entries to the config file ``/etc/ants``.
 ``ansible_callback_whitelist = logstash`` and add a new section called ``[callback_plugins]``. This section should contain the ``LOGSTASH_SERVER`` and the ``LOGSTASH_PORT``. The defaults of the Logstash callback plugin are applied if you do not set these settings.
