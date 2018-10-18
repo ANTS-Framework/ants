@@ -34,6 +34,7 @@ CFG = configer.read_config('main')
 ANTS_PATH = os.path.dirname(os.path.realpath(__file__))
 DESTINATION = os.path.expanduser(CFG['destination'])
 _ROOT = os.path.abspath(os.path.dirname(__file__))
+_PROJECT_ROOT = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
 
 
 def find_file(f):
@@ -156,10 +157,17 @@ def run_ansible(args):
         cmd.append('--skip-tags')
         cmd.append(args.skip_tags)
 
+    # Add user configured search path and default search path for callback plugins
+    ANSIBLE_CALLBACK_PLUGINS = '%s:%s' % (args.ansible_callback_plugins, os.path.join(os.path.join(_PROJECT_ROOT, 'antslib', 'plugins', 'callback')))
+    logger.console_logger.debug("Add env variable ANSIBLE_CALLBACK_PLUGINS: %s" % ANSIBLE_CALLBACK_PLUGINS)
+    os.environ['ANSIBLE_CALLBACK_PLUGINS'] = ANSIBLE_CALLBACK_PLUGINS
+
     if CFG['ansible_callback_whitelist']:
-        os.environ['ANSIBLE_CALLBACK_WHITELIST'] = ', %s' % CFG['ansible_callback_whitelist']
+        logger.console_logger.debug("Add env variable ANSIBLE_CALLBACK_WHITELIST: %s" % args.ansible_callback_whitelist)
+        os.environ['ANSIBLE_CALLBACK_WHITELIST'] = args.ansible_callback_whitelist
         cfg_callback_plugins = configer.read_config('callback_plugins')
         for key, value in cfg_callback_plugins.iteritems():
+            logger.console_logger.debug("Add env variable: %s: %s" % (key, value))
             os.environ[key] = value
 
     proc = subprocess.Popen(cmd, bufsize=1, stdout=subprocess.PIPE,
