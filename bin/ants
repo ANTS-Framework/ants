@@ -158,7 +158,9 @@ def run_ansible(args):
         cmd.append(args.skip_tags)
 
     # Add user configured search path and default search path for callback plugins
-    ANSIBLE_CALLBACK_PLUGINS = '%s:%s' % (args.ansible_callback_plugins, os.path.join(os.path.join(_PROJECT_ROOT, 'antslib', 'plugins', 'callback')))
+    ANSIBLE_CALLBACK_PLUGINS = os.path.join(os.path.join(_PROJECT_ROOT, 'antslib', 'plugins', 'callback'))
+    if args.ansible_callback_plugins:
+        ANSIBLE_CALLBACK_PLUGINS = '%s:%s' % (args.ansible_callback_plugins, ANSIBLE_CALLBACK_PLUGINS)
     logger.console_logger.debug("Add env variable ANSIBLE_CALLBACK_PLUGINS: %s" % ANSIBLE_CALLBACK_PLUGINS)
     os.environ['ANSIBLE_CALLBACK_PLUGINS'] = ANSIBLE_CALLBACK_PLUGINS
 
