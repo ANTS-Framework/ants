@@ -195,7 +195,7 @@ def parse_args(version, LOG_RECAP, DESTINATION, CFG):
         '--ansible_callback_plugins', help='Colon separated paths in which Ansible will search for Callback Plugins.', default=ansible_callback_plugins)
     # Doc: https://docs.ansible.com/ansible/latest/reference_appendices/config.html#envvar-ANSIBLE_CALLBACK_WHITELIST
     parser.add_argument(
-        '--ansible_callback_whitelist', help='Comma separated list of whitelisted callbacks.', default=ansible_callback_whitelist)
+        '--ansible_callback_whitelist', help='Comma separated list of whitelisted Callback Plugins.', default=ansible_callback_whitelist)
 
     # Options for ansible pull
     parser.add_argument(
