@@ -156,9 +156,9 @@ Nothing. You just set up a configuration management that communicates savely ove
 
 No additional infrastructure and no AD binding required.
 
---------------------------
-Add your own inventor file
---------------------------
+---------------------------
+Add your own inventory file
+---------------------------
 
 You can add your own inventory file. This can be a `dynamic inventory source <http://docs.ansible.com/ansible/latest/dev_guide/developing_inventory.html>`__ or a `static file <https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html#hosts-and-groups>`__. By default, ANTS will look for the inventory file in its python package. This is useful because it enables you to use inventory scripts like ``inventory_ad`` without having to specify the full path. However, if you would
 like to place your inventory file somewhere else you're free to do so. All you have to do is use an absolute path in ``ants.cfg``.
