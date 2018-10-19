@@ -4,6 +4,7 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import (absolute_import, division, print_function)
+import copy
 __metaclass__ = type
 
 DOCUMENTATION = '''
@@ -114,7 +115,7 @@ class CallbackModule(CallbackBase):
 
     def v2_playbook_on_start(self, playbook):
         self.playbook = playbook._file_name
-        data = self.base_data
+        data = copy.deepcopy(self.base_data)
         data['status'] = 'OK'
         data['ansible_type'] = 'start'
         data['ansible_playbook'] = self.playbook
@@ -132,16 +133,24 @@ class CallbackModule(CallbackBase):
         else:
             status = "FAILED"
 
-        data = self.base_data
+        data = copy.deepcopy(self.base_data)
         data['status'] = status
         data['ansible_type'] = "finish"
         data['ansible_playbook_duration'] = runtime.total_seconds()
-        data['ansible_result'] = json.dumps(summarize_stat)
         data['ansible_playbook'] = self.playbook
+
+        try:
+            data['ansible_result_skipped'] = summarize_stat[self.fqdn]['skipped']
+            data['ansible_result_ok'] = summarize_stat[self.fqdn]['ok']
+            data['ansible_result_failures'] = summarize_stat[self.fqdn]['failures']
+        except KeyError as err:
+            data['ansible_logstash_error'] = err
+            data['ansible_result'] = json.dumps(summarize_stat)
+
         self.logger.info("ansible stats", extra=data)
 
     def v2_runner_on_ok(self, result, **kwargs):
-        data = self.base_data
+        data = copy.deepcopy(self.base_data)
         data['status'] = "OK"
         data['ansible_type'] = "task"
         data['ansible_task'] = result._task
@@ -150,7 +159,7 @@ class CallbackModule(CallbackBase):
         self.logger.info("ansible ok", extra=data)
 
     def v2_runner_on_skipped(self, result, **kwargs):
-        data = self.base_data
+        data = copy.deepcopy(self.base_data)
         data['status'] = "SKIPPED"
         data['ansible_type'] = "task"
         data['ansible_task'] = result._task
@@ -158,7 +167,7 @@ class CallbackModule(CallbackBase):
         self.logger.info("ansible skipped", extra=data)
 
     def v2_playbook_on_import_for_host(self, result, imported_file):
-        data = self.base_data
+        data = copy.deepcopy(self.base_data)
         data['status'] = "IMPORTED"
         data['ansible_type'] = "import"
         data['imported_file'] = imported_file
@@ -166,7 +175,7 @@ class CallbackModule(CallbackBase):
         self.logger.info("ansible import", extra=data)
 
     def v2_playbook_on_not_import_for_host(self, result, missing_file):
-        data = self.base_data
+        data = copy.deepcopy(self.base_data)
         data['status'] = "NOT IMPORTED"
         data['ansible_type'] = "import"
         data['missing_file'] = missing_file
@@ -174,7 +183,7 @@ class CallbackModule(CallbackBase):
         self.logger.info("ansible import", extra=data)
 
     def v2_runner_on_failed(self, result, **kwargs):
-        data = self.base_data
+        data = copy.deepcopy(self.base_data)
         data['status'] = "FAILED"
         data['ansible_type'] = "task"
         data['ansible_task'] = result._task
