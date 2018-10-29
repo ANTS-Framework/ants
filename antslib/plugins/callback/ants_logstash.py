@@ -113,6 +113,15 @@ class CallbackModule(CallbackBase):
                 'session': self.session,
         }
 
+    def recurse_results(self, results_dict, data, prefix='ansible_results'):
+        for key, value in results_dict.iteritems():
+            if type(value) is dict:
+                data = self.recurse_results(value, data)
+            else:
+                data['%s_%s' % (prefix, key)] = value
+        return data
+
+
     def v2_playbook_on_start(self, playbook):
         self.playbook = playbook._file_name
         data = copy.deepcopy(self.base_data)
@@ -154,8 +163,16 @@ class CallbackModule(CallbackBase):
         data['status'] = "OK"
         data['ansible_type'] = "task"
         data['ansible_task'] = result._task
-        data['ansible_result'] = self._dump_results(result._result)
         data['ansible_playbook'] = self.playbook
+
+        results = self._dump_results(result._result)
+        try:
+            results_dict = json.loads(results)
+            data = self.recurse_results(results_dict, data)
+        except KeyError as err:
+            data['ansible_logstash_error'] = err
+            data['ansible_result'] = results
+
         self.logger.info("ansible ok", extra=data)
 
     def v2_runner_on_skipped(self, result, **kwargs):
@@ -187,7 +204,15 @@ class CallbackModule(CallbackBase):
         data['status'] = "FAILED"
         data['ansible_type'] = "task"
         data['ansible_task'] = result._task
-        data['ansible_result'] = self._dump_results(result._result)
         data['ansible_playbook'] = self.playbook
         self.errors += 1
+
+        results = self._dump_results(result._result)
+        try:
+            results_dict = json.loads(results)
+            data = self.recurse_results(results_dict, data)
+        except KeyError as err:
+            data['ansible_logstash_error'] = err
+            data['ansible_result'] = results
+
         self.logger.error("ansible failed", extra=data)
