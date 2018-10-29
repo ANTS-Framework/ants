@@ -44,7 +44,7 @@ setuptools.setup(
     keywords='client antsFramework ansible ansiblePull unibas',
     packages=['antslib', 'antslib.inventory'],
     install_requires=[
-        'ansible==2.6.5',
+        'ansible==2.7.1',
         'ldap3==2.5',
         'python-logstash==0.4.6',
     ],
