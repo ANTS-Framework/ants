@@ -42,7 +42,11 @@ setuptools.setup(
         'Programming Language :: Python :: 2.7',
     ],
     keywords='client antsFramework ansible ansiblePull unibas',
-    packages=['antslib', 'antslib.inventory'],
+    packages=[
+        'antslib',
+        'antslib.inventory',
+        'antslib.plugins',
+    ],
     install_requires=[
         'ansible==2.6.5',
         'ldap3==2.5',
@@ -51,6 +55,7 @@ setuptools.setup(
     package_data={
         'antslib': ['etc/ants.cfg'],
         'antslib.inventory': ['inventory_default', 'inventory_ad'],
+        'antslib.plugins': ['callback/ants_logstash.py'],
     },
     python_requires='>=2.7, <3'
 )
