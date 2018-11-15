@@ -157,7 +157,7 @@ def run_ansible(args):
         cmd.append('--skip-tags')
         cmd.append(args.skip_tags)
 
-    # Add user configured search path and default search path for callback plugins
+    # Add user configured search path and default search path for callback plugins
     ANSIBLE_CALLBACK_PLUGINS = os.path.join(os.path.join(_PROJECT_ROOT, 'antslib', 'plugins', 'callback'))
     if args.ansible_callback_plugins:
         ANSIBLE_CALLBACK_PLUGINS = '%s:%s' % (args.ansible_callback_plugins, ANSIBLE_CALLBACK_PLUGINS)
