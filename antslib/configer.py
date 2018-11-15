@@ -62,6 +62,12 @@ def read_config(config_section, config_file='ants.cfg'):
         macos_dict = macos_prefs.read_prefs(config_section)
         config_dict = macos_prefs.merge_dicts(config_dict, macos_dict)
 
+    # Add base search path to config
+    # This is done to allow for easy append of custom paths while keeping the
+    # default search path as well
+    if config_section == 'main':
+        config_dict['ansible_callback_plugins_base_path'] = os.path.join(os.path.join(_ROOT, 'plugins', 'callback'))
+
     return config_dict
 
 
