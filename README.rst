@@ -180,8 +180,11 @@ This entry on the other hand will look for your inventory file in ``/etc/ants``:
 ---------------------
 Callback plugins and reporting
 ---------------------
-You can log the run results into your Logstash instance. Just add the following entries to the config file ``/etc/ants``.
-``ansible_callback_whitelist = logstash`` and add a new section called ``[callback_plugins]``. This section should contain the ``LOGSTASH_SERVER`` and the ``LOGSTASH_PORT``. The defaults of the Logstash callback plugin are applied if you do not set these settings.
+ANTS can be configured to execute ansible callback plugins. We will cover the most common use case here: log ANTS information to logstash.
+
+ANTS ships with a modified version of the `default ansible logstash plugin <https://docs.ansible.com/ansible/latest/plugins/callback/logstash.html>`__. If you want to use plugins that are installed at a custom location you can specify your path in the ``ants.cfg`` config file under ``ansible_callback_plugins``.
+
+In order for ANTS to execute the callback plugin, just add the following entries to the config file: ``ansible_callback_whitelist = ants_logstash`` and add a new section called ``[callback_plugins]``.  This section should contain the ``LOGSTASH_SERVER`` and the ``LOGSTASH_PORT``.  ANTS will set the environment variables according to these values. Environment variables will only be added if the ``ansible_callback_whitelist`` is not empty.
 
 You can add other callback plugins to ``ansible_callback_whitelist`` if you desire. The same is true for ``[callback_plugins]``. Just add environment variables to that sub section. 
 

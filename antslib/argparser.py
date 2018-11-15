@@ -157,6 +157,8 @@ def parse_args(version, LOG_RECAP, DESTINATION, CFG):
     parser = argparse.ArgumentParser()
     _ROOT = os.path.abspath(os.path.dirname(__file__))
     inventory = os.path.join(_ROOT, 'inventory', CFG['inventory_script'])
+    ansible_callback_plugins = CFG['ansible_callback_plugins']
+    ansible_callback_whitelist = CFG['ansible_callback_whitelist']
 
     # Informations
     parser.add_argument('--version', help='Print software version and exit',
@@ -186,6 +188,14 @@ def parse_args(version, LOG_RECAP, DESTINATION, CFG):
                         action=InitializeAntsAction)
     parser.add_argument(
         '--refresh', help='Delete the local git repo to force a git clone by ansible-pull.', action='store_true')
+
+    # Callback plugin options
+    # Doc: https://docs.ansible.com/ansible/latest/reference_appendices/config.html#envvar-ANSIBLE_CALLBACK_PLUGINS
+    parser.add_argument(
+        '--ansible_callback_plugins', help='Colon separated paths in which Ansible will search for Callback Plugins.', default=ansible_callback_plugins)
+    # Doc: https://docs.ansible.com/ansible/latest/reference_appendices/config.html#envvar-ANSIBLE_CALLBACK_WHITELIST
+    parser.add_argument(
+        '--ansible_callback_whitelist', help='Comma separated list of whitelisted Callback Plugins.', default=ansible_callback_whitelist)
 
     # Options for ansible pull
     parser.add_argument(
