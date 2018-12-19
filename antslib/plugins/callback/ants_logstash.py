@@ -110,6 +110,7 @@ class CallbackModule(CallbackBase):
         self.base_data = {
                 '@host': self.fqdn,
                 '@host_short': self.hostname,
+                '@program': 'ants',
                 'session': self.session,
         }
 
