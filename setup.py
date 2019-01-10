@@ -49,7 +49,7 @@ setuptools.setup(
     ],
     install_requires=[
         'ansible==2.7.5',
-        'ldap3==2.5',
+        'ldap3==2.5.2',
         'python-logstash==0.4.6',
     ],
     package_data={
