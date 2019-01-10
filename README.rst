@@ -10,6 +10,14 @@ ANTS Framework
     :target: https://pypi.python.org/pypi/ants_client/
     :alt: License
 
+.. image:: https://pyup.io/repos/github/ANTS-Framework/ants/shield.svg
+    :target: https://pyup.io/repos/github/ANTS-Framework/ants/
+    :alt: Updates
+
+.. image:: https://pyup.io/repos/github/ANTS-Framework/ants/python-3-shield.svg
+    :target: https://pyup.io/repos/github/ANTS-Framework/ants/
+    :alt: Python 3
+
 ANTS is a framework to manage and apply macOS and Linux host configurations using Ansible Pull.
 
 The ANTS Framework is developed by the Client Services Team of the `University of Basel <https://www.unibas.ch/>`__ `IT Services <https://its.unibas.ch>`__
