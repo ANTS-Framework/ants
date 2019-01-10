@@ -1,8 +1,5 @@
 update: all
 branch: master
-schedule: "every week on monday"
 pin: True
-requirements:
-    - setup.py
 branch pre-fix: pyup-
 close_prs: True
