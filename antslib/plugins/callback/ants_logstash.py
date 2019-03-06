@@ -1,6 +1,7 @@
+# -*- coding: utf-8 -*-
 # (C) 2016, Ievgen Khmelenko <ujenmr@gmail.com>
 # (C) 2017 Ansible Project
-# (C) 2018 University of Basel
+# (C) 2018-2019 University of Basel
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import (absolute_import, division, print_function)
@@ -108,20 +109,26 @@ class CallbackModule(CallbackBase):
 
         self.start_time = datetime.utcnow()
         self.base_data = {
-                '@host': self.fqdn,
-                '@host_short': self.hostname,
-                '@program': 'ants',
-                'session': self.session,
+            '@host': self.fqdn,
+            '@host_short': self.hostname,
+            '@program': 'ants',
+            'session': self.session,
         }
 
-    def recurse_results(self, results_dict, data, prefix='ansible_results'):
+    def recurse_results(self, results_dict, data, task_name):
         for key, value in results_dict.iteritems():
             if type(value) is dict:
-                data = self.recurse_results(value, data)
+                data = self.recurse_results(value, data, task_name)
             else:
+                prefix = 'ansible_%s' % task_name
                 data['%s_%s' % (prefix, key)] = value
         return data
 
+    def display_data(self, data):
+        """Print dataset to stdout."""
+        self._display.vv('Logstash Callback:\tPrinting dataset for ansible_type \'%s\'' % data['ansible_type'])
+        for key, value in data.iteritems():
+            self._display.vv('Logstash Callback:\t\t%s: %s' % (key, value))
 
     def v2_playbook_on_start(self, playbook):
         self.playbook = playbook._file_name
@@ -130,6 +137,7 @@ class CallbackModule(CallbackBase):
         data['ansible_type'] = 'start'
         data['ansible_playbook'] = self.playbook
         self.logger.info("ansible start", extra=data)
+        self.display_data(data)
 
     def v2_playbook_on_stats(self, stats):
         end_time = datetime.utcnow()
@@ -158,31 +166,49 @@ class CallbackModule(CallbackBase):
             data['ansible_result'] = json.dumps(summarize_stat)
 
         self.logger.info("ansible stats", extra=data)
+        self.display_data(data)
 
     def v2_runner_on_ok(self, result, **kwargs):
         data = copy.deepcopy(self.base_data)
         data['status'] = "OK"
         data['ansible_type'] = "task"
-        data['ansible_task'] = result._task
+        # This object can be of type <class 'ansible.parsing.yaml.objects.AnsibleUnicode'> or <type 'unicode'>
+        # Force casting to string
+        data['ansible_task_type'] = str(result._task.action)
+        data['ansible_task'] = str(result._task)
         data['ansible_playbook'] = self.playbook
 
         results = self._dump_results(result._result)
         try:
             results_dict = json.loads(results)
-            data = self.recurse_results(results_dict, data)
+            data = self.recurse_results(results_dict, data, result._task.action)
         except KeyError as err:
             data['ansible_logstash_error'] = err
             data['ansible_result'] = results
 
         self.logger.info("ansible ok", extra=data)
+        self.display_data(data)
 
     def v2_runner_on_skipped(self, result, **kwargs):
         data = copy.deepcopy(self.base_data)
         data['status'] = "SKIPPED"
         data['ansible_type'] = "task"
-        data['ansible_task'] = result._task
+        # This object can be of type <class 'ansible.parsing.yaml.objects.AnsibleUnicode'> or <type 'unicode'>
+        # Force casting to string
+        data['ansible_task_type'] = str(result._task.action)
+        data['ansible_task'] = str(result._task)
         data['ansible_playbook'] = self.playbook
+
+        results = self._dump_results(result._result)
+        try:
+            results_dict = json.loads(results)
+            data = self.recurse_results(results_dict, data, result._task.action)
+        except KeyError as err:
+            data['ansible_logstash_error'] = err
+            data['ansible_result'] = results
+
         self.logger.info("ansible skipped", extra=data)
+        self.display_data(data)
 
     def v2_playbook_on_import_for_host(self, result, imported_file):
         data = copy.deepcopy(self.base_data)
@@ -199,21 +225,26 @@ class CallbackModule(CallbackBase):
         data['missing_file'] = missing_file
         data['ansible_playbook'] = self.playbook
         self.logger.info("ansible import", extra=data)
+        self.display_data(data)
 
     def v2_runner_on_failed(self, result, **kwargs):
         data = copy.deepcopy(self.base_data)
         data['status'] = "FAILED"
         data['ansible_type'] = "task"
-        data['ansible_task'] = result._task
+        # This object can be of type <class 'ansible.parsing.yaml.objects.AnsibleUnicode'> or <type 'unicode'>
+        # Force casting to string
+        data['ansible_task_type'] = str(result._task.action)
+        data['ansible_task'] = str(result._task)
         data['ansible_playbook'] = self.playbook
         self.errors += 1
 
         results = self._dump_results(result._result)
         try:
             results_dict = json.loads(results)
-            data = self.recurse_results(results_dict, data)
+            data = self.recurse_results(results_dict, data, result._task.action)
         except KeyError as err:
             data['ansible_logstash_error'] = err
             data['ansible_result'] = results
 
         self.logger.error("ansible failed", extra=data)
+        self.display_data(data)
