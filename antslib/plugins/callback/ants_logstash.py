@@ -101,10 +101,14 @@ class CallbackModule(CallbackBase):
                 message_type=os.getenv('LOGSTASH_TYPE', 'ants')
             )
             self._display.v('Logstash Callback:\tLogger configuration:')
-            self._display.v('Logstash Callback:\t\tLogstash server: %s' % os.getenv('LOGSTASH_SERVER', 'localhost'))
-            self._display.v('Logstash Callback:\t\tLogstash port: %s' % os.getenv('LOGSTASH_PORT', 5000))
-            self._display.v('Logstash Callback:\t\tLogstash formatter version: %s' % os.getenv('LOGSTASH_FORMATTER_VERSION', '1'))
-            self._display.v('Logstash Callback:\t\tLogstash message type: %s' % os.getenv('LOGSTASH_TYPE', 'ants'))
+            self._display.v('Logstash Callback:\t\tLogstash server: %s' %
+                            os.getenv('LOGSTASH_SERVER', 'localhost'))
+            self._display.v('Logstash Callback:\t\tLogstash port: %s' %
+                            os.getenv('LOGSTASH_PORT', 5000))
+            self._display.v('Logstash Callback:\t\tLogstash formatter version: %s' % os.getenv(
+                'LOGSTASH_FORMATTER_VERSION', '1'))
+            self._display.v('Logstash Callback:\t\tLogstash message type: %s' % os.getenv(
+                'LOGSTASH_TYPE', 'ants'))
 
             self.logger.addHandler(self.handler)
             self.fqdn = socket.getfqdn()
@@ -127,8 +131,10 @@ class CallbackModule(CallbackBase):
         try:
             primary_ip = socket.gethostbyname(self.fqdn)
         except (ValueError, socket.error, socket.gaierror, socket.herror, socket.timeout):
-            self._display.error('Logstash Callback:\tError while looking up primary IP for %s.' % self.fqdn)
-            self._display.error('Logstash Callback:\tUsing address for localhost instead.')
+            self._display.error(
+                'Logstash Callback:\tError while looking up primary IP for %s.' % self.fqdn)
+            self._display.error(
+                'Logstash Callback:\tUsing address for localhost instead.')
             primary_ip = '127.0.0.1'
         return primary_ip
 
@@ -143,7 +149,8 @@ class CallbackModule(CallbackBase):
 
     def display_data(self, data):
         """Print dataset to stdout."""
-        self._display.vv('Logstash Callback:\tPrinting dataset for ansible_type \'%s\'' % data['ansible_type'])
+        self._display.vv(
+            'Logstash Callback:\tPrinting dataset for ansible_type \'%s\'' % data['ansible_type'])
         for key, value in data.iteritems():
             self._display.vv('Logstash Callback:\t\t%s: %s' % (key, value))
 
@@ -198,7 +205,8 @@ class CallbackModule(CallbackBase):
         results = self._dump_results(result._result)
         try:
             results_dict = json.loads(results)
-            data = self.recurse_results(results_dict, data, result._task.action)
+            data = self.recurse_results(
+                results_dict, data, result._task.action)
         except KeyError as err:
             data['ansible_logstash_error'] = err
             data['ansible_result'] = results
@@ -219,7 +227,8 @@ class CallbackModule(CallbackBase):
         results = self._dump_results(result._result)
         try:
             results_dict = json.loads(results)
-            data = self.recurse_results(results_dict, data, result._task.action)
+            data = self.recurse_results(
+                results_dict, data, result._task.action)
         except KeyError as err:
             data['ansible_logstash_error'] = err
             data['ansible_result'] = results
@@ -258,7 +267,8 @@ class CallbackModule(CallbackBase):
         results = self._dump_results(result._result)
         try:
             results_dict = json.loads(results)
-            data = self.recurse_results(results_dict, data, result._task.action)
+            data = self.recurse_results(
+                results_dict, data, result._task.action)
         except KeyError as err:
             data['ansible_logstash_error'] = err
             data['ansible_result'] = results
