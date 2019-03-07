@@ -138,13 +138,43 @@ class CallbackModule(CallbackBase):
             primary_ip = '127.0.0.1'
         return primary_ip
 
+    def list_elements_have_same_type(self, key, data_list):
+        """Take a list and return True if all elements are of the same type.
+        Return False otherwise.
+        """
+        element_type = None
+        for e in data_list:
+            if not element_type:
+                element_type = type(e)
+            if element_type is not type(e):
+                self._display.vv(
+                    'Logstash Callback:\tType mismatch detected for %s.' % key)
+                self._display.vv('Logstash Callback:\t\tDefault type for this list is %s but element "%s" has type %s.' % (
+                    element_type, str(e), type(e)))
+                return False
+        return True
+
+    def force_unicode(self, data_list):
+        """Take a list of elements and return a new list with unicode elements.
+
+        Logstash has difficulty handling lists with different types of data.
+        E.g. a mix of integers and strings. Hence, we force all elements to be unicode.
+        """
+        new_list = []
+        for e in data_list:
+            new_list.append(unicode(str(e), "utf-8"))
+        return new_list
+
     def recurse_results(self, results_dict, data, task_name):
         for key, value in results_dict.iteritems():
             if type(value) is dict:
                 data = self.recurse_results(value, data, task_name)
             else:
-                prefix = 'ansible_%s' % task_name
-                data['%s_%s' % (prefix, key)] = value
+                new_key = 'ansible_%s_%s' % (task_name, key)
+                if type(value) is list:
+                    if not self.list_elements_have_same_type(new_key, value):
+                        value = self.force_unicode(value)
+                data[new_key] = value
         return data
 
     def display_data(self, data):
