@@ -95,11 +95,16 @@ class CallbackModule(CallbackBase):
             self.logger.setLevel(logging.DEBUG)
 
             self.handler = logstash.TCPLogstashHandler(
-                os.getenv('LOGSTASH_SERVER', 'localhost'),
-                int(os.getenv('LOGSTASH_PORT', 5000)),
-                version=1,
+                host=os.getenv('LOGSTASH_SERVER', 'localhost'),
+                port=int(os.getenv('LOGSTASH_PORT', 5000)),
+                version=int(os.getenv('LOGSTASH_FORMATTER_VERSION', '1')),
                 message_type=os.getenv('LOGSTASH_TYPE', 'ants')
             )
+            self._display.v('Logstash Callback:\tLogger configuration:')
+            self._display.v('Logstash Callback:\t\tLogstash server: %s' % os.getenv('LOGSTASH_SERVER', 'localhost'))
+            self._display.v('Logstash Callback:\t\tLogstash port: %s' % os.getenv('LOGSTASH_PORT', 5000))
+            self._display.v('Logstash Callback:\t\tLogstash formatter version: %s' % os.getenv('LOGSTASH_FORMATTER_VERSION', '1'))
+            self._display.v('Logstash Callback:\t\tLogstash message type: %s' % os.getenv('LOGSTASH_TYPE', 'ants'))
 
             self.logger.addHandler(self.handler)
             self.fqdn = socket.getfqdn()
