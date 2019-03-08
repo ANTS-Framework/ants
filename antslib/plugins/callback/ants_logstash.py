@@ -115,28 +115,14 @@ class CallbackModule(CallbackBase):
             self.hostname = socket.gethostname()
             self.session = str(uuid.uuid1())
             self.errors = 0
-            self.primary_ip = self.get_primary_ip()
 
         self.start_time = datetime.utcnow()
         self.base_data = {
             '@host': self.fqdn,
             '@host_short': self.hostname,
             '@program': 'ants',
-            '@host_ip': self.primary_ip,
             'session': self.session,
         }
-
-    def get_primary_ip(self):
-        # https://stackoverflow.com/questions/166506/finding-local-ip-addresses-using-pythons-stdlib
-        try:
-            primary_ip = socket.gethostbyname(self.fqdn)
-        except (ValueError, socket.error, socket.gaierror, socket.herror, socket.timeout):
-            self._display.error(
-                'Logstash Callback:\tError while looking up primary IP for %s.' % self.fqdn)
-            self._display.error(
-                'Logstash Callback:\tUsing address for localhost instead.')
-            primary_ip = '127.0.0.1'
-        return primary_ip
 
     def list_elements_have_same_type(self, key, data_list):
         """Take a list and return True if all elements are of the same type.
