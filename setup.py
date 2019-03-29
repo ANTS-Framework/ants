@@ -48,8 +48,8 @@ setuptools.setup(
         'antslib.plugins',
     ],
     install_requires=[
-        'ansible==2.7.5',
-        'ldap3==2.5.2',
+        'ansible==2.7.8',
+        'ldap3==2.6',
         'python-logstash==0.4.6',
     ],
     package_data={
