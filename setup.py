@@ -11,6 +11,9 @@ with open('bin/ants', 'r') as f:
         if '__version__ =' in line:
             version = line.split(' ')[2].rstrip().replace("'", "")
 
+with open('requirements.txt', 'r') as f:
+    requirements = f.read().splitlines()
+
 setuptools.setup(
     name='ants_client',
 
@@ -47,11 +50,7 @@ setuptools.setup(
         'antslib.inventory',
         'antslib.plugins',
     ],
-    install_requires=[
-        'ansible==2.7.9',
-        'ldap3==2.6',
-        'python-logstash==0.4.6',
-    ],
+    install_requires=requirements,
     package_data={
         'antslib': ['etc/ants.cfg'],
         'antslib.inventory': ['inventory_default', 'inventory_ad'],
