@@ -18,16 +18,13 @@ __credits__ = ["Balz Aschwanden", "Jan Welker"]
 __license__ = "GPL"
 
 
+import datetime
 import os
-import sys
 import shutil
 import subprocess
-import datetime
+import sys
 
-
-from antslib import argparser
-from antslib import logger
-from antslib import configer
+from antslib import argparser, configer, logger
 
 CFG = configer.read_config("main")
 

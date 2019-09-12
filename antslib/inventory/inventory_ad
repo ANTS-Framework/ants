@@ -24,13 +24,13 @@ __copyright__ = "Copyright 2017, University of Basel"
 __credits__ = ["Balz Aschwanden", "Jan Welker"]
 __license__ = "GPL"
 
-from ssl import CERT_REQUIRED
+from json import dumps
 from os import path
 from socket import gethostname
-from json import dumps
-from ldap3 import Server, Connection, Tls, NTLM, core
-from antslib import configer
-from antslib import logger
+from ssl import CERT_REQUIRED
+
+from antslib import configer, logger
+from ldap3 import NTLM, Connection, Server, Tls, core
 
 
 def connect_to_ad(ldap_user, ldap_pw, ldap_host):

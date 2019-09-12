@@ -12,8 +12,8 @@ __credits__ = ["Balz Aschwanden"]
 __license__ = "GPL"
 
 
-import os
 import json
+import os
 import socket
 
 

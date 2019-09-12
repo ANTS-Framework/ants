@@ -5,13 +5,12 @@ Handle logging.
 """
 
 
-import os
-import sys
 import logging
 import logging.handlers
+import os
+import sys
 
 from antslib import configer
-
 
 CFG = configer.read_config("main")
 logfile_main = os.path.join(CFG["log_dir"], "ants.log")

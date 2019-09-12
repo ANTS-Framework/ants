@@ -6,9 +6,9 @@ defined here.
 """
 
 
-import subprocess
 import argparse
 import os
+import subprocess
 import sys
 
 from antslib import configer
