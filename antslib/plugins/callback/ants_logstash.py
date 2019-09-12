@@ -6,6 +6,15 @@
 
 from __future__ import absolute_import, division, print_function
 import copy
+import os
+import json
+import socket
+import uuid
+from datetime import datetime
+
+import logging
+
+from ansible.plugins.callback import CallbackBase
 
 __metaclass__ = type
 
@@ -37,13 +46,6 @@ DOCUMENTATION = """
         default: ants
 """
 
-import os
-import json
-import socket
-import uuid
-from datetime import datetime
-
-import logging
 
 try:
     import logstash
@@ -51,8 +53,6 @@ try:
     HAS_LOGSTASH = True
 except ImportError:
     HAS_LOGSTASH = False
-
-from ansible.plugins.callback import CallbackBase
 
 
 class CallbackModule(CallbackBase):

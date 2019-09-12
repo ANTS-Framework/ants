@@ -32,13 +32,13 @@ def get_logger(name, logfile=False, maxBytes=0, formatter="default"):
         handler = logging.StreamHandler(sys.stdout)
         handler.setLevel(logging.DEBUG)
 
-    if formatter is "default":
+    if formatter == "default":
         handler.setFormatter(
             logging.Formatter(
                 "%(asctime)s\t%(message)s", datefmt="%b %d %Y %H:%M:%S %Z"
             )
         )
-    elif formatter is "simple":
+    elif formatter == "simple":
         handler.setFormatter(logging.Formatter("%(message)s"))
     else:
         raise ValueError("Formatter must be simple or default")

@@ -207,7 +207,10 @@ def parse_args(version, LOG_RECAP, DESTINATION, CFG):
     # Actions
     parser.add_argument(
         "--initialize",
-        help="Write a local configuration for ants. Existing local configuration will be overwritten",
+        help=(
+            "Write a local configuration for ants. "
+            "Existing local configuration will be overwritten"
+        ),
         action=InitializeAntsAction,
     )
     parser.add_argument(
