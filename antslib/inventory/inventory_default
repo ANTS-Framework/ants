@@ -30,9 +30,9 @@ def main():
     """Print default inventory in JSON."""
     output = dict()
     fqdn = helper.get_hostname()
-    output['ants-common'] = ([fqdn])
+    output["ants-common"] = [fqdn]
     print helper.format_output(output)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -20,10 +20,11 @@ Preferences can be defined several places. Precedence is:
 # Disable them.
 # pylint: disable=E0611
 from Foundation import CFPreferencesCopyAppValue
+
 # pylint: enable=E0611
 
 
-BUNDLE_ID = 'com.github.ants-framework'
+BUNDLE_ID = "com.github.ants-framework"
 
 
 #####################################################
@@ -68,5 +69,5 @@ def read_prefs(prefs_section):
     return macos_dict
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pass

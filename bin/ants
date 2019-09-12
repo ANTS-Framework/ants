@@ -8,7 +8,7 @@ Run ansible-pull with a set of defined parameters
 and log the content of these runs.
 """
 
-__version__ = '1.9.1'
+__version__ = "1.9.1"
 
 __author__ = "Balz Aschwanden"
 __email__ = "balz.aschwanden@unibas.ch"
@@ -29,17 +29,17 @@ from antslib import argparser
 from antslib import logger
 from antslib import configer
 
-CFG = configer.read_config('main')
+CFG = configer.read_config("main")
 
 ANTS_PATH = os.path.dirname(os.path.realpath(__file__))
-DESTINATION = os.path.expanduser(CFG['destination'])
+DESTINATION = os.path.expanduser(CFG["destination"])
 _ROOT = os.path.abspath(os.path.dirname(__file__))
 _PROJECT_ROOT = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
 
 
 def find_file(f):
     """Search for a file in environment PATH and return first match or None"""
-    paths = os.environ['PATH'].split(':')
+    paths = os.environ["PATH"].split(":")
     paths.insert(0, _ROOT)
     for path in paths:
         file_path = os.path.join(path, f)
@@ -67,13 +67,13 @@ def parse_proc(proc):
     recap_line = None
     get_recap = False
     start_run_time = datetime.datetime.now()
-    for line in iter(proc.stdout.readline, ''):
+    for line in iter(proc.stdout.readline, ""):
         logger.write_log(line, task_line)
-        if line.startswith('TASK'):
+        if line.startswith("TASK"):
             task_line = line
         if get_recap:
             recap_line = line
-        get_recap = bool(line.startswith('PLAY RECAP'))
+        get_recap = bool(line.startswith("PLAY RECAP"))
 
     # https://stackoverflow.com/questions/37942022/returncode-of-popen-object-is-none-after-the-process-is-terminated
     proc.stdout.close()
@@ -98,8 +98,9 @@ def run_ansible(args):
     ansible_pull_exe = args.ansible_pull_exe
     if not ansible_pull_exe:
         logger.console_logger.debug(
-            "Variable ansible_pull_exe is not set. Searching in PATH.")
-        ansible_pull_exe = find_file('ansible-pull')
+            "Variable ansible_pull_exe is not set. Searching in PATH."
+        )
+        ansible_pull_exe = find_file("ansible-pull")
     if not ansible_pull_exe:
         sys.exit("Could not find executable ansible-pull. Aborting.")
     if not os.access(ansible_pull_exe, os.X_OK):
@@ -112,80 +113,99 @@ def run_ansible(args):
 
     if not os.access(inventory, os.X_OK):
         logger.console_logger.debug(
-            "Inventory file at %s is not executable." % inventory)
-        logger.console_logger.debug(
-            "Using static inventory file at %s." % inventory)
+            "Inventory file at %s is not executable." % inventory
+        )
+        logger.console_logger.debug("Using static inventory file at %s." % inventory)
 
-    cmd = [ansible_pull_exe,
-           '--clean',
-           '-f',
-           '-i', inventory,
-           '-d', args.destination,
-           '-U', args.git_repo,
-           '-C', args.branch,
-           args.playbook]
+    cmd = [
+        ansible_pull_exe,
+        "--clean",
+        "-f",
+        "-i",
+        inventory,
+        "-d",
+        args.destination,
+        "-U",
+        args.git_repo,
+        "-C",
+        args.branch,
+        args.playbook,
+    ]
 
     if os.path.isfile(args.ssh_key):
         logger.console_logger.debug("Found ssh key at %s" % args.ssh_key)
-        cmd.append('--private-key')
+        cmd.append("--private-key")
         cmd.append(args.ssh_key)
     else:
         logger.console_logger.debug("No key found at %s" % args.ssh_key)
 
     if args.verbose:
-        cmd.append('-%s' % ('v' * args.verbose))
+        cmd.append("-%s" % ("v" * args.verbose))
 
     if args.check:
-        cmd.append('--check')
+        cmd.append("--check")
 
     if not args.stricthostkeychecking:
         logger.console_logger.debug(
-            "Strict host key checking for ansible-pull is disabled.")
-        cmd.append('--accept-host-key')
+            "Strict host key checking for ansible-pull is disabled."
+        )
+        cmd.append("--accept-host-key")
 
     if args.wait:
         logger.console_logger.debug(
-            "Running ansible-pull with a random wait intervall of %s sec" % CFG['wait_interval'])
-        cmd.append('-s')
-        cmd.append(CFG['wait_interval'])
+            "Running ansible-pull with a random wait intervall of %s sec"
+            % CFG["wait_interval"]
+        )
+        cmd.append("-s")
+        cmd.append(CFG["wait_interval"])
 
     if args.tags:
-        cmd.append('--tags')
+        cmd.append("--tags")
         cmd.append(args.tags)
 
     if args.skip_tags:
-        cmd.append('--skip-tags')
+        cmd.append("--skip-tags")
         cmd.append(args.skip_tags)
 
     # Add user configured search path and default search path for callback plugins
-    ANSIBLE_CALLBACK_PLUGINS = CFG['ansible_callback_plugins_base_path']
+    ANSIBLE_CALLBACK_PLUGINS = CFG["ansible_callback_plugins_base_path"]
     if args.ansible_callback_plugins:
-        ANSIBLE_CALLBACK_PLUGINS = '%s:%s' % (args.ansible_callback_plugins, ANSIBLE_CALLBACK_PLUGINS)
-    logger.console_logger.debug("Add env variable ANSIBLE_CALLBACK_PLUGINS: %s" % ANSIBLE_CALLBACK_PLUGINS)
-    os.environ['ANSIBLE_CALLBACK_PLUGINS'] = ANSIBLE_CALLBACK_PLUGINS
+        ANSIBLE_CALLBACK_PLUGINS = "%s:%s" % (
+            args.ansible_callback_plugins,
+            ANSIBLE_CALLBACK_PLUGINS,
+        )
+    logger.console_logger.debug(
+        "Add env variable ANSIBLE_CALLBACK_PLUGINS: %s" % ANSIBLE_CALLBACK_PLUGINS
+    )
+    os.environ["ANSIBLE_CALLBACK_PLUGINS"] = ANSIBLE_CALLBACK_PLUGINS
 
-    if CFG['ansible_callback_whitelist']:
-        logger.console_logger.debug("Add env variable ANSIBLE_CALLBACK_WHITELIST: %s" % args.ansible_callback_whitelist)
-        os.environ['ANSIBLE_CALLBACK_WHITELIST'] = args.ansible_callback_whitelist
-        cfg_callback_plugins = configer.read_config('callback_plugins')
+    if CFG["ansible_callback_whitelist"]:
+        logger.console_logger.debug(
+            "Add env variable ANSIBLE_CALLBACK_WHITELIST: %s"
+            % args.ansible_callback_whitelist
+        )
+        os.environ["ANSIBLE_CALLBACK_WHITELIST"] = args.ansible_callback_whitelist
+        cfg_callback_plugins = configer.read_config("callback_plugins")
         for key, value in cfg_callback_plugins.iteritems():
             logger.console_logger.debug("Add env variable: %s: %s" % (key, value))
             os.environ[key] = value
 
-    proc = subprocess.Popen(cmd, bufsize=1, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
+    proc = subprocess.Popen(
+        cmd, bufsize=1, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    )
     return parse_proc(proc)
 
 
 def __main__():
-    args = argparser.parse_args(__version__, os.path.join(CFG['log_dir'], 'recap.log'),
-                                DESTINATION, CFG)
+    args = argparser.parse_args(
+        __version__, os.path.join(CFG["log_dir"], "recap.log"), DESTINATION, CFG
+    )
     if args.verbose:
         logger.console_logger.setLevel(logger.logging.DEBUG)
     if args.quiet:
         logger.console_logger.disabled = True
     if not configer.is_root():
-        sys.exit('Script must be run as root')
+        sys.exit("Script must be run as root")
     logger.console_logger.debug("Running ansible-pull in verbose mode")
     logger.status_file_rollover()
 
@@ -194,11 +214,13 @@ def __main__():
             msg = "Deleting local git repo at %s" % args.destination
             logger.console_logger.info(msg)
             logger.logfile_logger.info(
-                '************************************************************************')
-            logger.logfile_logger.info('Running ants client in refresh mode')
+                "************************************************************************"
+            )
+            logger.logfile_logger.info("Running ants client in refresh mode")
             logger.logfile_logger.info(msg)
             logger.logfile_logger.info(
-                '************************************************************************')
+                "************************************************************************"
+            )
             try:
                 shutil.rmtree(args.destination)
             except OSError as error:
