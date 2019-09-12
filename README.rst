@@ -106,7 +106,7 @@ Go `here <https://github.com/ANTS-Framework/ants/blob/Update_readme/macos/ANTS_C
 Run other roles
 ---------------
 Fork or duplicate `our example playbook <https://github.com/ANTS-Framework/playbook>`__
-and change the client configuration to point to your repository. 
+and change the client configuration to point to your repository.
 Update ``main.yml`` to assign different roles to your hosts.
 
 You can use the default Ansible syntax. You can also use wildcards. Have a look at the
@@ -194,7 +194,7 @@ ANTS ships with a modified version of the `default ansible logstash plugin <http
 
 In order for ANTS to execute the callback plugin, just add the following entries to the config file: ``ansible_callback_whitelist = ants_logstash`` and add a new section called ``[callback_plugins]``.  This section should contain the ``LOGSTASH_SERVER`` and the ``LOGSTASH_PORT``.  ANTS will set the environment variables according to these values. Environment variables will only be added if the ``ansible_callback_whitelist`` is not empty.
 
-You can add other callback plugins to ``ansible_callback_whitelist`` if you desire. The same is true for ``[callback_plugins]``. Just add environment variables to that sub section. 
+You can add other callback plugins to ``ansible_callback_whitelist`` if you desire. The same is true for ``[callback_plugins]``. Just add environment variables to that sub section.
 
 Please note that the casing of the environment variables is essential for the callback plugins to work. The casing can be found using ``ansible-doc -t callback logstash $name_of_plugin``.
 
@@ -224,7 +224,7 @@ What does ANTS do, that Ansible can not?
 
 - ANTS gives you a set of ready to be used roles for typical macOS and Linux host configurations.
 - ANTS let's you utilize Active Directory to map computers to roles. With all it's delegation and nesting features.
-- ANTS utilizes Ansible Pull and therefore does not require an active network connection to a central server. Roles will be locally applied even if the host is offline. 
+- ANTS utilizes Ansible Pull and therefore does not require an active network connection to a central server. Roles will be locally applied even if the host is offline.
 
 *********************************************************
 What does Ansible or Ansible Tower do that ANTS does not?
