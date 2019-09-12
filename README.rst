@@ -185,9 +185,9 @@ This entry on the other hand will look for your inventory file in ``/etc/ants``:
     [main]
     inventory_script = /etc/ants/myinventory
 
----------------------
+------------------------------
 Callback plugins and reporting
----------------------
+------------------------------
 ANTS can be configured to execute ansible callback plugins. We will cover the most common use case here: log ANTS information to logstash.
 
 ANTS ships with a modified version of the `default ansible logstash plugin <https://docs.ansible.com/ansible/latest/plugins/callback/logstash.html>`__. If you want to use plugins that are installed at a custom location you can specify your path in the ``ants.cfg`` config file under ``ansible_callback_plugins``.
