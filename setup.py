@@ -10,7 +10,7 @@ with open(os.path.join(_ROOT, "README.rst")) as f:
 with open("bin/ants", "r") as f:
     for line in f:
         if "__version__ =" in line:
-            version = line.split(" ")[2].rstrip().replace("'", "")
+            version = line.split(" ")[2].rstrip().replace('"', "")
 
 with open("requirements.txt", "r") as f:
     requirements = f.read().splitlines()

@@ -3,7 +3,7 @@ include /usr/local/share/luggage/luggage.make
 
 TITLE=ants_client
 REVERSE_DOMAIN=com.github.antsframework.ants
-PACKAGE_VERSION:=$(shell grep ^__version__ ../bin/ants | cut -d "'" -f 2 )
+PACKAGE_VERSION:=$(shell grep ^__version__ ../bin/ants | cut -d '"' -f 2 )
 PAYLOAD=\
 		ants_client_virtualenv \
 		pack-script-preinstall \
