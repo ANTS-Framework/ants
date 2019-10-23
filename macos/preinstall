@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 # MIT License
 #
 # Copyright (c) 2013-2019 Rich Trouton (https://github.com/rtrouton)
@@ -24,6 +23,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# Check if Command Line Tools are installed
 if /usr/bin/xcode-select -p &> /dev/null; then
     echo "XCode Command Line Tools are installed"
     exit 0
@@ -47,7 +47,7 @@ if [[ "$macos_vers" -ge 9 ]]; then
 
 	if [[ "$macos_vers" -ge 15 ]]; then
 	   cmd_line_tools=$(softwareupdate -l | awk '/\*\ Label: Command Line Tools/ { $1=$1;print }' | sed 's/^[[ \t]]*//;s/[[ \t]]*$//;s/*//' | cut -c 9-)
-	elif [[ "$macos_vers" -gt 9 ]] && [[ "$macos_vers" -lt 14 ]]; then
+	elif [[ "$macos_vers" -gt 9 ]] && [[ "$macos_vers" -lt 15 ]]; then
 	   cmd_line_tools=$(softwareupdate -l | awk '/\*\ Command Line Tools/ { $1=$1;print }' | grep "$macos_vers" | sed 's/^[[ \t]]*//;s/[[ \t]]*$//;s/*//' | cut -c 2-)
 	elif [[ "$macos_vers" -eq 9 ]]; then
 	   cmd_line_tools=$(softwareupdate -l | awk '/\*\ Command Line Tools/ { $1=$1;print }' | grep "Mavericks" | sed 's/^[[ \t]]*//;s/[[ \t]]*$//;s/*//' | cut -c 2-)
