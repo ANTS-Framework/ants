@@ -16,6 +16,7 @@ It always returns the common group for common tasks. It also returns the group
 common-ad-bound if the result comes from an online query rather than from the
 cache.
 """
+from __future__ import print_function
 
 __author__ = "Jan Welker"
 __email__ = "jan.welker@unibas.ch"
@@ -194,7 +195,7 @@ def main():
         output[cfg["common_ad_connected"]] = [fqdn]
 
         # Printing output in Ansible JSON syntax
-        print format_output(output)
+        print(format_output(output))
 
     # We are not bound to AD we are offline
     else:
@@ -203,12 +204,12 @@ def main():
         cached_output = read_cache(cache_file)
         if cached_output:
             # Printing cached
-            print cached_output
+            print(cached_output)
         else:
             # Printing default group
             output = dict()
             output[cfg["common_group"]] = [fqdn]
-            print format_output(output)
+            print(format_output(output))
 
 
 if __name__ == "__main__":

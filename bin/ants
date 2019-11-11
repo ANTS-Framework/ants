@@ -183,7 +183,7 @@ def run_ansible(args):
         )
         os.environ["ANSIBLE_CALLBACK_WHITELIST"] = args.ansible_callback_whitelist
         cfg_callback_plugins = configer.read_config("callback_plugins")
-        for key, value in cfg_callback_plugins.iteritems():
+        for key, value in cfg_callback_plugins.items():
             logger.console_logger.debug("Add env variable: %s: %s" % (key, value))
             os.environ[key] = value
 

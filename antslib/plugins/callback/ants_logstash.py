@@ -6,6 +6,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+from builtins import str
 import copy
 import json
 import logging
@@ -163,14 +164,14 @@ class CallbackModule(CallbackBase):
         """
         new_list = []
         for e in data_list:
-            new_list.append(unicode(str(e), "utf-8"))
+            new_list.append(str(e))
         self._display.vv(
             'Logstash Callback:\tForced unicode for list "%s": %s' % (key, new_list)
         )
         return new_list
 
     def recurse_results(self, results_dict, data, task_name):
-        for key, value in results_dict.iteritems():
+        for key, value in results_dict.items():
             if type(value) is dict:
                 data = self.recurse_results(value, data, task_name)
             else:
@@ -187,7 +188,7 @@ class CallbackModule(CallbackBase):
             "Logstash Callback:\tPrinting dataset for ansible_type '%s'"
             % data["ansible_type"]
         )
-        for key, value in data.iteritems():
+        for key, value in data.items():
             self._display.vv("Logstash Callback:\t\t%s: %s" % (key, value))
 
     def v2_playbook_on_start(self, playbook):
@@ -203,7 +204,7 @@ class CallbackModule(CallbackBase):
         end_time = datetime.utcnow()
         runtime = end_time - self.start_time
         summarize_stat = {}
-        for host in stats.processed.keys():
+        for host in list(stats.processed.keys()):
             summarize_stat[host] = stats.summarize(host)
 
         if self.errors == 0:

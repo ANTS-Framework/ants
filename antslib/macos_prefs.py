@@ -19,6 +19,7 @@ Preferences can be defined several places. Precedence is:
 # No name 'CFPreferencesCopyAppValue' in module 'Foundation' warnings.
 # Disable them.
 # pylint: disable=E0611
+from builtins import str
 from Foundation import CFPreferencesCopyAppValue
 
 # pylint: enable=E0611
@@ -35,7 +36,7 @@ BUNDLE_ID = "com.github.ants-framework"
 def convert_dict(nsdict):
     """Generates Python dict of strings from Obj-C NSDict."""
     python_dict = {}
-    for k in nsdict.keys():
+    for k in list(nsdict.keys()):
         python_dict[str(k)] = str(nsdict[k])
     return python_dict
 
@@ -45,8 +46,8 @@ def merge_dicts(config_dict, macos_dict):
 
     Overwrites values in config dict if also found in prefs dict.
     """
-    for item in config_dict.keys():
-        if item in macos_dict.keys():
+    for item in list(config_dict.keys()):
+        if item in list(macos_dict.keys()):
             config_dict[item] = macos_dict[item]
     return config_dict
 

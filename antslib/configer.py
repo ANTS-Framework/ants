@@ -3,9 +3,14 @@
 
 Handle parsing of configuraiton file options.
 """
+from __future__ import print_function
 
 
-import ConfigParser
+from future import standard_library
+
+standard_library.install_aliases()
+from builtins import input
+import configparser
 import os
 import re
 
@@ -30,7 +35,7 @@ def create_dir(dir_name):
     """Create directory"""
     uid = os.getuid()
     gid = os.getgid()
-    os.mkdir(dir_name, 0755)
+    os.mkdir(dir_name, 0o755)
     os.chown(dir_name, uid, gid)
 
 
@@ -48,13 +53,14 @@ def read_config(config_section, config_file="ants.cfg"):
     if not os.path.isfile(default_config):
         raise OSError("Default config file not found at %s" % default_config)
 
-    config = ConfigParser.ConfigParser()
+    config = configparser.ConfigParser()
     config.optionxform = str
     try:
         config.read([default_config, system_config])
-    except ConfigParser.MissingSectionHeaderError, ConfigParser.ParsingError:
-        print "Error while reading configuration from %s." % system_config
-        print "Ignoring system configuraiton"
+    except configparser.MissingSectionHeaderError as xxx_todo_changeme:
+        configparser.ParsingError = xxx_todo_changeme
+        print("Error while reading configuration from %s." % system_config)
+        print("Ignoring system configuraiton")
         config.read([default_config])
 
     config_dict = dict(config.items(config_section))
@@ -77,11 +83,11 @@ def read_config(config_section, config_file="ants.cfg"):
 def get_values(cfg, section_name):
     """Take and return a dict of values and prompt the user for a reply."""
     msg = "Configuration for section: %s" % section_name
-    print "%s" % re.sub(r"[a-zA-Z :]", "#", msg)
-    print "%s" % msg
-    print "%s" % re.sub(r"[a-zA-Z :]", "#", msg)
-    for key, value in cfg.iteritems():
-        cfg[key] = raw_input("%s [Example: %s]:" % (key, value)) or value
+    print("%s" % re.sub(r"[a-zA-Z :]", "#", msg))
+    print("%s" % msg)
+    print("%s" % re.sub(r"[a-zA-Z :]", "#", msg))
+    for key, value in cfg.items():
+        cfg[key] = input("%s [Example: %s]:" % (key, value)) or value
     return cfg
 
 
@@ -104,17 +110,17 @@ def get_config():
             read_config("callback_plugins"), "callback_plugins"
         )
 
-    config = ConfigParser.ConfigParser()
+    config = configparser.ConfigParser()
     config.add_section("main")
-    for key, value in cfg_main.iteritems():
+    for key, value in cfg_main.items():
         config.set("main", key, value)
     if cfg_ad:
         config.add_section("ad")
-        for key, value in cfg_ad.iteritems():
+        for key, value in cfg_ad.items():
             config.set("ad", key, value)
     if cfg_callback_plugins:
         config.add_section("callback_plugins")
-        for key, value in cfg_ad.iteritems():
+        for key, value in cfg_ad.items():
             config.set("callback_plugins", key, value)
     return config
 
