@@ -57,8 +57,8 @@ def read_config(config_section, config_file="ants.cfg"):
     config.optionxform = str
     try:
         config.read([default_config, system_config])
-    except configparser.MissingSectionHeaderError as xxx_todo_changeme:
-        configparser.ParsingError = xxx_todo_changeme
+    except configparser.MissingSectionHeaderError as missing_section_error:
+        configparser.ParsingError = missing_section_error
         print("Error while reading configuration from %s." % system_config)
         print("Ignoring system configuraiton")
         config.read([default_config])
