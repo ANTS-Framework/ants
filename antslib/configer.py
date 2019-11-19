@@ -53,7 +53,7 @@ def read_config(config_section, config_file="ants.cfg"):
     if not os.path.isfile(default_config):
         raise OSError("Default config file not found at %s" % default_config)
 
-    config = configparser.ConfigParser()
+    config = configparser.ConfigParser(strict=False)
     config.optionxform = str
     try:
         config.read([default_config, system_config])
