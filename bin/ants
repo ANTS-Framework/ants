@@ -64,7 +64,8 @@ def parse_proc(proc):
     recap_line = None
     get_recap = False
     start_run_time = datetime.datetime.now()
-    for line in iter(proc.stdout.readline, ""):
+    for line in iter(proc.stdout.readline, b""):
+        line = line.decode("utf-8")
         logger.write_log(line, task_line)
         if line.startswith("TASK"):
             task_line = line
@@ -183,7 +184,7 @@ def run_ansible(args):
         )
         os.environ["ANSIBLE_CALLBACK_WHITELIST"] = args.ansible_callback_whitelist
         cfg_callback_plugins = configer.read_config("callback_plugins")
-        for key, value in cfg_callback_plugins.iteritems():
+        for key, value in cfg_callback_plugins.items():
             logger.console_logger.debug("Add env variable: %s: %s" % (key, value))
             os.environ[key] = value
 
