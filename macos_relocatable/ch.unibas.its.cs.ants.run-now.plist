@@ -18,7 +18,7 @@
         <array>
             <string>bash</string>
             <string>-c</string>
-            <string>/Library/ANTS-Framework2/Python.framework/Versions/2.7/bin/ants; /bin/rm /Users/Shared/.ch.unibas.its.cs.ants.run-now</string>
+            <string>/Library/ANTS-Framework/Python.framework/Versions/Current/bin/ants; /bin/rm /Users/Shared/.ch.unibas.its.cs.ants.run-now</string>
         </array>
         <key>StandardErrorPath</key>
         <string>/var/log/system.log</string>

@@ -5,7 +5,7 @@ TITLE=ants_client
 REVERSE_DOMAIN=com.github.antsframework.ants
 PACKAGE_VERSION:=$(shell grep ^__version__ ../bin/ants | cut -d '"' -f 2 )
 PAYLOAD=\
-		ants_client_virtualenv \
+		ants_client_relocatable_python \
 		pack-script-preinstall \
 		pack-script-postinstall \
 		pack-pathd \
@@ -14,31 +14,33 @@ PAYLOAD=\
 
 ANTS_LIB=/Library/ANTS-Framework
 VENV_PYTHON_EXE=${ANTS_LIB}/bin/python
+PYTHON_VERSION=3.7.4
 
-setup_virtualenv:
-	# Install ants_client into a virtual environment
-	# We could install virtualenv with --user but the luggage is running as root
+clone_reloc_python:
+	# Clone the relocatable python project (https://github.com/gregneagle/relocatable-python) into /tmp
+	# First remove the directory if it exists
+	@sudo rm -rf /private/tmp/reloc_python
+	git clone https://github.com/gregneagle/relocatable-python.git /private/tmp/reloc_python
+
+setup_reloc_python:
+	# Use the relocatable python project to create a python framework and install ants-client
+	echo "Using python Version ${PYTHON_VERSION}"
 	@sudo mkdir -p ${WORK_D}${ANTS_LIB}
-	@sudo /usr/local/bin/pip install virtualenv
-	@sudo /usr/local/bin/virtualenv ${WORK_D}${ANTS_LIB}
-	@sudo ${WORK_D}${ANTS_LIB}/bin/pip install ants_client --pre
-	@sudo find ${WORK_D} -name "*.pyc" -exec rm -rf {} \;
+	@sudo /private/tmp/reloc_python/make_relocatable_python_framework.py --pip-requirements requirements_pkg.txt --destination ${WORK_D}${ANTS_LIB} --python-version ${PYTHON_VERSION}
 
-fix_venv_path: setup_virtualenv
-	# Delete build dir reference in venv path
-	# Source: https://github.com/google/macops/blob/master/packages/python/Makefile
-	for f in $$(/usr/bin/sudo grep -RIl ${WORK_D} ${WORK_D});do \
-		/usr/bin/sudo sed -i '' -e "s^${WORK_D}^^" $${f}; \
+fix_python_path:
+	# Set correct hashbang in python files
+	# This is necessary because we install the python.framework in /tmp for packaging and therefore the paths map towards /tmp
+	for f in $$(/usr/bin/sudo grep -GRIl '#!/private/tmp/the_luggage/ants_client-1.9.1/root/Library/ANTS-Framework/.*' ${WORK_D}/${ANTS_LIB}/Python.framework/Versions/Current/bin);do \
+		/usr/bin/sudo sed -i '' -- 's/\/private\/tmp\/the_luggage\/ants_client-1.9.1\/root//g' $${f}; \
 	done
-
-fix_venv_path_inventory: setup_virtualenv
-	# Set correct hashbang for inventory scripts
+	# Set the correct hashbang in the inventory scripts
 	# This is necessary because ansible-pull doesn't have antslib in it's path
-	for f in $$(/usr/bin/sudo grep -RIl '#!/usr/bin/env python' ${WORK_D}/${ANTS_LIB}/lib/python2.7/site-packages/antslib/inventory);do \
-		/usr/bin/sudo sed -i '' -- 's/\/usr\/bin\/env python/\/Library\/ANTS-Framework\/bin\/python/g' $${f}; \
+	for f in $$(/usr/bin/sudo grep -RIl '#!/usr/bin/env python' ${WORK_D}/${ANTS_LIB}/Python.framework/Versions/Current/lib/python*/site-packages/antslib/inventory);do \
+		/usr/bin/sudo sed -i '' -- 's/\/usr\/bin\/env python/\/Library\/ANTS-Framework\/Python.framework\/Versions\/Current\/Resources\/Python.app\/Contents\/MacOS\/Python/g' $${f}; \
 	done
 
-ants_client_virtualenv: fix_venv_path fix_venv_path_inventory
+ants_client_relocatable_python: clone_reloc_python setup_reloc_python fix_python_path
 
 l_pathd:
 	@sudo mkdir -p ${WORK_D}/private/etc/paths.d
@@ -49,7 +51,3 @@ pack-pathd: l_pathd
 	@sudo ${CP} ch.unibas.its.cs.ants ${WORK_D}/private/etc/paths.d
 	@sudo chown -R root:wheel ${WORK_D}/private/etc/paths.d/ch.unibas.its.cs.ants
 	@sudo chmod -R 644 ${WORK_D}/private/etc/paths.d/ch.unibas.its.cs.ants
-
-ants_client:
-	# Install ants_client to system python
-	@sudo /usr/local/bin/pip install --root ${WORK_D} -I ants_client --pre

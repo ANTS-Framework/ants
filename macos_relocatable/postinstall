@@ -17,8 +17,4 @@ launchctl load -w /Library/LaunchDaemons/ch.unibas.its.cs.ants.plist
 launchctl load -w /Library/LaunchDaemons/ch.unibas.its.cs.ants.run-now.plist
 
 # Change ansible-pull exe location
-sed -i '' 's|ansible_pull_exe:.*|ansible_pull_exe: /Library/ANTS-Framework2/Python.framework/Versions/2.7/bin/ansible-pull|g' /etc/ants/ants.cfg
-
-# Fix python path of inventory scripts
-sed -i '' 's|#!/usr/bin/env python|#!/Library/ANTS-Framework2/Python.framework/Versions/2.7/Resources/Python.app/Contents/MacOS/Python|g' /Library/ANTS-Framework2/Python.framework/Versions/2.7/lib/python2.7/site-packages/antslib/inventory/inventory_ad
-sed -i '' 's|#!/usr/bin/env python|#!/Library/ANTS-Framework2/Python.framework/Versions/2.7/Resources/Python.app/Contents/MacOS/Python|g' /Library/ANTS-Framework2/Python.framework/Versions/2.7/lib/python2.7/site-packages/antslib/inventory/inventory_default
+sed -i '' 's|ansible_pull_exe =.*|ansible_pull_exe = /Library/ANTS-Framework/Python.framework/Versions/Current/bin/ansible-pull|g' /etc/ants/ants.cfg
