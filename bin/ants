@@ -176,6 +176,8 @@ def run_ansible(args):
         "Add env variable ANSIBLE_CALLBACK_PLUGINS: %s" % ANSIBLE_CALLBACK_PLUGINS
     )
     os.environ["ANSIBLE_CALLBACK_PLUGINS"] = ANSIBLE_CALLBACK_PLUGINS
+    os.environ["ANSIBLE_PYTHON_PATH"] = "/Library/ANTS-Framework/Python.framework/" \
+                                        "Resources/Python.app/Contents/MacOS/Python"
 
     if CFG["ansible_callback_whitelist"]:
         logger.console_logger.debug(
