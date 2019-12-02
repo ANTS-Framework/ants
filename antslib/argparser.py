@@ -81,7 +81,7 @@ class GetGroupsAction(argparse.Action):
             cmd, bufsize=1, stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
         (out, err) = proc.communicate()
-        sys.stdout.write("%s\n" % out)
+        sys.stdout.write("%s\n" % out.decode("utf-8"))
         parser.exit()
 
 
