@@ -177,12 +177,17 @@ def run_ansible(args):
     )
     os.environ["ANSIBLE_CALLBACK_PLUGINS"] = ANSIBLE_CALLBACK_PLUGINS
 
-    # TODO Make this generic and allow use of config file
-    ANSIBLE_PYTHON_INTERPRETER = "/Library/ANTS-Framework/Python.framework/Resources/Python.app/Contents/MacOS/Python"
-    logger.console_logger.debug(
-        "Add env variable ANSIBLE_PYTHON_INTERPRETER: %s" % ANSIBLE_PYTHON_INTERPRETER
-    )
-    os.environ["ANSIBLE_PYTHON_INTERPRETER"] = ANSIBLE_PYTHON_INTERPRETER
+    # Only add python interpreter env variable if one is given, else ansible-pull will crash
+    ANSIBLE_PYTHON_INTERPRETER = CFG["ansible_python_interpreter"]
+    if args.ansible_python_interpreter:
+        ANSIBLE_PYTHON_INTERPRETER = args.ansible_python_interpreter
+
+    if ANSIBLE_PYTHON_INTERPRETER.strip():
+        logger.console_logger.debug(
+            "Add env variable ANSIBLE_PYTHON_INTERPRETER: %s"
+            % ANSIBLE_PYTHON_INTERPRETER
+        )
+        os.environ["ANSIBLE_PYTHON_INTERPRETER"] = ANSIBLE_PYTHON_INTERPRETER
 
     if CFG["ansible_callback_whitelist"]:
         logger.console_logger.debug(

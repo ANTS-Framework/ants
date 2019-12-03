@@ -298,6 +298,13 @@ def parse_args(version, LOG_RECAP, DESTINATION, CFG):
         default=CFG["skip_tags"],
     )
 
+    # Ansible Python Interpreter
+    parser.add_argument(
+        "--ansible_python_interpreter",
+        help="Specifies a specific python interpreter. Overwrites the config value",
+        default=None
+    )
+
     # Parse arguments
     return parser.parse_args()
 
