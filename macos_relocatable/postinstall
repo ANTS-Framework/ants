@@ -1,15 +1,13 @@
 #!/bin/bash
 
-#  ANTS pkg postinstall script
+#  ANTS pkg postinstall script for relocatable python
 #
 #  Load ants launch daemons
-#  Create symlinks to Apple PyObjC frameworks in ANTS
 #
 #
-#  Created by Jacob F. Grant and Balz Aschwanden
+#  Created by Tim Königl
 #
-#  Created: 01/03/18
-#  Updated: 09/12/19
+#  Created: 12/02/19
 #
 
 # load and launch daemons
