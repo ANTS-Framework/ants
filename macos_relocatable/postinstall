@@ -8,11 +8,8 @@
 #  Created by Tim Königl
 #
 #  Created: 12/02/19
-#
+#  Updated: 12/05/19
 
 # load and launch daemons
 launchctl load -w /Library/LaunchDaemons/ch.unibas.its.cs.ants.plist
 launchctl load -w /Library/LaunchDaemons/ch.unibas.its.cs.ants.run-now.plist
-
-# Change ansible-pull exe location
-sed -i '' 's|ansible_pull_exe =.*|ansible_pull_exe = /Library/ANTS-Framework/Python.framework/Versions/Current/bin/ansible-pull|g' /etc/ants/ants.cfg
