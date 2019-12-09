@@ -30,14 +30,16 @@ setup_reloc_python:
 
 fix_python_path:
 	# Set correct hashbang in python files
+	# Source: https://github.com/google/macops/blob/master/packages/python/Makefile
 	# This is necessary because we install the python.framework in /tmp for packaging and therefore the paths map towards /tmp
-	for f in $$(/usr/bin/sudo grep -GRIl '#!/private/tmp/the_luggage/ants_client-1.9.1/root/Library/ANTS-Framework/.*' ${WORK_D}/${ANTS_LIB}/Python.framework/Versions/Current/bin);do \
-		/usr/bin/sudo sed -i '' -- 's/\/private\/tmp\/the_luggage\/ants_client-1.9.1\/root//g' $${f}; \
+	for f in $$(/usr/bin/sudo grep -RIl ${WORK_D} ${WORK_D});do \
+		/usr/bin/sudo sed -i '' -e "s^/private${WORK_D}^^" $${f}; \
 	done
+
 	# Set the correct hashbang in the inventory scripts
 	# This is necessary because ansible-pull doesn't have antslib in it's path
 	for f in $$(/usr/bin/sudo grep -RIl '#!/usr/bin/env python' ${WORK_D}/${ANTS_LIB}/Python.framework/Versions/Current/lib/python*/site-packages/antslib/inventory);do \
-		/usr/bin/sudo sed -i '' -- 's/\/usr\/bin\/env python/\/Library\/ANTS-Framework\/Python.framework\/Versions\/Current\/Resources\/Python.app\/Contents\/MacOS\/Python/g' $${f}; \
+		/usr/bin/sudo sed -i '' -- 's^/usr/bin/env python^/Library/ANTS-Framework/Python.framework/Versions/Current/Resources/Python.app/Contents/MacOS/Python^g' $${f}; \
 	done
 
 ants_client_relocatable_python: clone_reloc_python setup_reloc_python fix_python_path
