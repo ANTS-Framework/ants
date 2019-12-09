@@ -178,9 +178,7 @@ def run_ansible(args):
     os.environ["ANSIBLE_CALLBACK_PLUGINS"] = ANSIBLE_CALLBACK_PLUGINS
 
     # Only add python interpreter env variable if one is given, else ansible-pull will crash
-    ANSIBLE_PYTHON_INTERPRETER = CFG["ansible_python_interpreter"]
-    if args.ansible_python_interpreter:
-        ANSIBLE_PYTHON_INTERPRETER = args.ansible_python_interpreter
+    ANSIBLE_PYTHON_INTERPRETER = args.ansible_python_interpreter
 
     if ANSIBLE_PYTHON_INTERPRETER.strip():
         logger.console_logger.debug(
