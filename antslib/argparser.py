@@ -81,7 +81,7 @@ class GetGroupsAction(argparse.Action):
             cmd, bufsize=1, stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
         (out, err) = proc.communicate()
-        sys.stdout.write("%s\n" % out)
+        sys.stdout.write("%s\n" % out.decode("utf-8"))
         parser.exit()
 
 
@@ -296,6 +296,13 @@ def parse_args(version, LOG_RECAP, DESTINATION, CFG):
         "--skip-tags",
         help="List of tags to be skipped. (Comma separated)",
         default=CFG["skip_tags"],
+    )
+
+    # Ansible Python Interpreter
+    parser.add_argument(
+        "--ansible_python_interpreter",
+        help="Specifies a specific python interpreter. Overwrites the config value",
+        default=CFG["ansible_python_interpreter"]
     )
 
     # Parse arguments
