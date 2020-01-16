@@ -177,25 +177,21 @@ def run_ansible(args):
     )
     os.environ["ANSIBLE_CALLBACK_PLUGINS"] = ANSIBLE_CALLBACK_PLUGINS
 
-    # Only add python interpreter env variable if
-    # * one is given, else ansible-pull will crash
-    # * the given path exists and is executable
+    # Only add python interpreter env variable if the given path exists and is executable
     ANSIBLE_PYTHON_INTERPRETER = args.ansible_python_interpreter
-
-    if ANSIBLE_PYTHON_INTERPRETER.strip():
-        if os.path.isfile(ANSIBLE_PYTHON_INTERPRETER) and os.access(
-            ANSIBLE_PYTHON_INTERPRETER, os.X_OK
-        ):
-            logger.console_logger.debug(
-                "Add env variable ANSIBLE_PYTHON_INTERPRETER: %s"
-                % ANSIBLE_PYTHON_INTERPRETER
-            )
-            os.environ["ANSIBLE_PYTHON_INTERPRETER"] = ANSIBLE_PYTHON_INTERPRETER
-        else:
-            logger.console_logger.warning(
-                "File not found or not executable\n\tANSIBLE_PYTHON_INTERPRETER: %s"
-                % ANSIBLE_PYTHON_INTERPRETER
-            )
+    if os.path.isfile(ANSIBLE_PYTHON_INTERPRETER) and os.access(
+        ANSIBLE_PYTHON_INTERPRETER, os.X_OK
+    ):
+        logger.console_logger.debug(
+            "Add env variable ANSIBLE_PYTHON_INTERPRETER: %s"
+            % ANSIBLE_PYTHON_INTERPRETER
+        )
+        os.environ["ANSIBLE_PYTHON_INTERPRETER"] = ANSIBLE_PYTHON_INTERPRETER
+    else:
+        logger.console_logger.warning(
+            "File not found or not executable\n\tANSIBLE_PYTHON_INTERPRETER: %s"
+            % ANSIBLE_PYTHON_INTERPRETER
+        )
 
     if CFG["ansible_callback_whitelist"]:
         logger.console_logger.debug(
