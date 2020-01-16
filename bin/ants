@@ -99,6 +99,13 @@ def run_ansible(args):
             "Variable ansible_pull_exe is not set. Searching in PATH."
         )
         ansible_pull_exe = find_file("ansible-pull")
+
+    if not os.path.isfile(ansible_pull_exe):
+        logger.console_logger.debug(
+            "Invalid path for ansible_pull_exe. Searching in PATH."
+        )
+        ansible_pull_exe = find_file("ansible-pull")
+
     if not ansible_pull_exe:
         sys.exit("Could not find executable ansible-pull. Aborting.")
     if not os.access(ansible_pull_exe, os.X_OK):
