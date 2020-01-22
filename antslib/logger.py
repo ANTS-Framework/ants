@@ -114,7 +114,7 @@ def parse_client_status(status_line):
         status_list = status_line.split(":")[1].split()
         for f in status_list:
             g = f.split("=")
-            if g[1] != "0":
+            if g[1] != "0" and g[0] != "skipped":
                 status = g[0]
     except IndexError:
         pass
