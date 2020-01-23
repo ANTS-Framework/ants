@@ -23,6 +23,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+old_ants_bin="/Library/ANTS-Framework/bin"
+old_ants_lib="/Library/ANTS-Framework/lib"
+old_ants_include="/Library/ANTS-Framework/include"
+old_ants="/Library/ANTS-Framework"
+
+# Check if an old version of ANTS (< 2) is installed. If so, remove it before installing the new one.
+if [[ -d "$old_ants_bin" || -d "$old_ants_lib" || -d "$old_ants_include" ]]; then
+    echo "Legacy installation of the ANTS-Framework found. Removing $old_ants."
+    rm -rf "$old_ants"
+fi
+
 # Check if Command Line Tools are installed
 if /usr/bin/xcode-select -p &> /dev/null; then
     echo "XCode Command Line Tools are installed"
