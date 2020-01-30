@@ -18,29 +18,39 @@ cache.
 """
 from __future__ import print_function
 
-__author__ = "Jan Welker"
-__email__ = "jan.welker@unibas.ch"
-__copyright__ = "Copyright 2017, University of Basel"
-
-__credits__ = ["Balz Aschwanden", "Jan Welker"]
-__license__ = "GPL"
-
 from json import dumps
 from os import path
 from socket import gethostname
 from ssl import CERT_REQUIRED
 
+import certifi
 from antslib import configer, logger
 from ldap3 import NTLM, Connection, Server, Tls, core
+
+__author__ = "Jan Welker"
+__email__ = "jan.welker@unibas.ch"
+__copyright__ = "Copyright 2017-2020, University of Basel"
+
+__credits__ = ["Balz Aschwanden", "Jan Welker"]
+__license__ = "GPL"
 
 
 def connect_to_ad(ldap_user, ldap_pw, ldap_host):
     """Connect to Active Directory and return the connection or None."""
-    tls = Tls(validate=CERT_REQUIRED)
-    server = Server(ldap_host, use_ssl=True, tls=tls)
+    tls = Tls(validate=CERT_REQUIRED, ca_certs_file=certifi.where())
+    server = Server(ldap_host, port=636, use_ssl=True, tls=tls)
+    logger.logfile_logger.info("inventory_ad: Try connection with:")
+    logger.logfile_logger.info(f"\tServer: {server}")
+    logger.logfile_logger.info(f"\tUser: {ldap_user}")
     connection = Connection(
-        server, user=ldap_user, password=ldap_pw, authentication=NTLM
+        server,
+        user=ldap_user,
+        password=ldap_pw,
+        authentication=NTLM,
+        raise_exceptions=True,
     )
+    logger.logfile_logger.info("inventory_ad: Connection object created:")
+    logger.logfile_logger.info(f"\t{connection}")
     try:
         connection.bind()
 
@@ -49,7 +59,9 @@ def connect_to_ad(ldap_user, ldap_pw, ldap_host):
             return connection
         else:
             return None
-    except core.exceptions.LDAPSocketOpenError:
+    except core.exceptions.LDAPSocketOpenError as e:
+        logger.logfile_logger.error(f"inventory_ad: LDAPSocketOpenError while binding:")
+        logger.logfile_logger.error(f"\t{e}")
         return None
 
 
@@ -67,7 +79,8 @@ def host_exist_in_ad(connection, simple_hostname, ldap_ou):
         response = connection.response[0]["attributes"]["cn"]
     except KeyError as error:
         logger.logfile_logger.info(
-            "Host %s not found in %s: %s" % (simple_hostname, ldap_ou, error)
+            "inventory_ad: Host %s not found in %s: %s"
+            % (simple_hostname, ldap_ou, error)
         )
         response = ""
 
@@ -83,7 +96,9 @@ def get_computer_dn(connection, simple_hostname, ldap_ou):
         response = connection.response[0]["attributes"]["distinguishedName"]
     except KeyError as error:
         logger.logfile_logger.info(
-            "DN of %s not found in %s: %s" % simple_hostname, ldap_ou, error
+            "inventory_ad: DN of %s not found in %s: %s" % simple_hostname,
+            ldap_ou,
+            error,
         )
         response = ""
     return response
@@ -164,7 +179,7 @@ def main():
     ad_connection = connect_to_ad(cfg["ldap_user"], cfg["ldap_pw"], cfg["ldap_host"])
     online = bool(ad_connection)
     if online:
-        logger.logfile_logger.info("Using online results from AD")
+        logger.logfile_logger.info("inventory_ad: Using online results from AD")
         # Initializing output
         output = dict()
         output[cfg["common_group"]] = [fqdn]
@@ -199,7 +214,7 @@ def main():
 
     # We are not bound to AD we are offline
     else:
-        logger.logfile_logger.info("Using cached results from AD")
+        logger.logfile_logger.info("inventory_ad: Using cached results from AD")
         # Reading cache file
         cached_output = read_cache(cache_file)
         if cached_output:
