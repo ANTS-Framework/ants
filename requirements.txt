@@ -3,3 +3,4 @@ ldap3==2.6.1
 python-logstash==0.4.6
 configparser==4.0.2
 future==0.18.2
+certifi==2019.11.28
