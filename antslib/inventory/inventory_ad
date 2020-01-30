@@ -40,8 +40,8 @@ def connect_to_ad(ldap_user, ldap_pw, ldap_host):
     tls = Tls(validate=CERT_REQUIRED, ca_certs_file=certifi.where())
     server = Server(ldap_host, port=636, use_ssl=True, tls=tls)
     logger.logfile_logger.info("inventory_ad: Try connection with:")
-    logger.logfile_logger.info(f"\tServer: {server}")
-    logger.logfile_logger.info(f"\tUser: {ldap_user}")
+    logger.logfile_logger.info("\tServer: %s" % server)
+    logger.logfile_logger.info("\tUser: %s" % ldap_user)
     connection = Connection(
         server,
         user=ldap_user,
@@ -50,7 +50,7 @@ def connect_to_ad(ldap_user, ldap_pw, ldap_host):
         raise_exceptions=True,
     )
     logger.logfile_logger.info("inventory_ad: Connection object created:")
-    logger.logfile_logger.info(f"\t{connection}")
+    logger.logfile_logger.info("\t%s" % connection)
     try:
         connection.bind()
 
@@ -60,8 +60,8 @@ def connect_to_ad(ldap_user, ldap_pw, ldap_host):
         else:
             return None
     except core.exceptions.LDAPSocketOpenError as e:
-        logger.logfile_logger.error(f"inventory_ad: LDAPSocketOpenError while binding:")
-        logger.logfile_logger.error(f"\t{e}")
+        logger.logfile_logger.error("inventory_ad: LDAPSocketOpenError while binding:")
+        logger.logfile_logger.error("\t%s" % e)
         return None
 
 
