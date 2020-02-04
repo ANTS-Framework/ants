@@ -31,7 +31,7 @@ setuptools.setup(
     ],
     author_email="balz.aschwanden@unibas.ch, jan.welker@unibas.ch",
     license="GPLv3",
-    scripts=["bin/ants"],
+    scripts=["bin/ants", "antslib/inventory/inventory_ad", "antslib/inventory/inventory_default"],
     classifiers=[
         # https://pypi.python.org/pypi?%3Aaction=list_classifiers
         "Development Status :: 5 - Production/Stable",
