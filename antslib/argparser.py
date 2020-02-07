@@ -151,8 +151,8 @@ def parse_args(version, LOG_RECAP, DESTINATION, CFG):
     entered on the command line.
     """
     parser = argparse.ArgumentParser()
-    _ROOT = os.path.dirname(sys.executable)
-    inventory = os.path.join(_ROOT, CFG["inventory_script"])
+    _PYTHON_EXECUTABLE_PATH = os.path.dirname(sys.executable)
+    inventory = os.path.join(_PYTHON_EXECUTABLE_PATH, CFG["inventory_script"])
     ansible_callback_plugins = CFG["ansible_callback_plugins"]
     ansible_callback_whitelist = CFG["ansible_callback_whitelist"]
 
