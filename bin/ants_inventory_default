@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""inventory_default
+"""ants_inventory_default
 ===================
 
 
@@ -11,7 +11,7 @@ It will return localhost and fqdn as members of
 the ants-common group.
 
 These values can be used to assign roles in local.yml but
-using a dynamic inventory script like inventory_ad.py
+using a dynamic inventory script like ants_inventory_ad
 is the prefered way of running ants.
 """
 from __future__ import print_function
