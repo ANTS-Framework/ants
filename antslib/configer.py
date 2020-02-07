@@ -103,7 +103,7 @@ def get_config():
     cfg_main = get_values(read_config("main"), "main")
     cfg_ad = None
     cfg_callback_plugins = None
-    if cfg_main["inventory_script"] == "inventory_ad":
+    if cfg_main["inventory_script"] == "ants_inventory_ad":
         cfg_ad = get_values(read_config("ad"), "ad")
     if cfg_main["ansible_callback_whitelist"]:
         cfg_callback_plugins = get_values(

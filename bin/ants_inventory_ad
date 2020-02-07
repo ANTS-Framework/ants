@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""inventory_ad
+"""ants_inventory_ad
 ===============
 
 This script is an Ansible Dynamic Inventory script. It takes the host name of a
@@ -39,7 +39,7 @@ def connect_to_ad(ldap_user, ldap_pw, ldap_host):
     """Connect to Active Directory and return the connection or None."""
     tls = Tls(validate=CERT_REQUIRED, ca_certs_file=certifi.where())
     server = Server(ldap_host, port=636, use_ssl=True, tls=tls)
-    logger.logfile_logger.info("inventory_ad: Try connection with:")
+    logger.logfile_logger.info("ants_inventory_ad: Try connection with:")
     logger.logfile_logger.info("\tServer: %s" % server)
     logger.logfile_logger.info("\tUser: %s" % ldap_user)
     connection = Connection(
@@ -49,7 +49,7 @@ def connect_to_ad(ldap_user, ldap_pw, ldap_host):
         authentication=NTLM,
         raise_exceptions=True,
     )
-    logger.logfile_logger.info("inventory_ad: Connection object created:")
+    logger.logfile_logger.info("ants_inventory_ad: Connection object created:")
     logger.logfile_logger.info("\t%s" % connection)
     try:
         connection.bind()
@@ -60,7 +60,7 @@ def connect_to_ad(ldap_user, ldap_pw, ldap_host):
         else:
             return None
     except core.exceptions.LDAPSocketOpenError as e:
-        logger.logfile_logger.error("inventory_ad: LDAPSocketOpenError while binding:")
+        logger.logfile_logger.error("ants_inventory_ad: LDAPSocketOpenError while binding:")
         logger.logfile_logger.error("\t%s" % e)
         return None
 
@@ -79,7 +79,7 @@ def host_exist_in_ad(connection, simple_hostname, ldap_ou):
         response = connection.response[0]["attributes"]["cn"]
     except KeyError as error:
         logger.logfile_logger.info(
-            "inventory_ad: Host %s not found in %s: %s"
+            "ants_inventory_ad: Host %s not found in %s: %s"
             % (simple_hostname, ldap_ou, error)
         )
         response = ""
@@ -96,7 +96,7 @@ def get_computer_dn(connection, simple_hostname, ldap_ou):
         response = connection.response[0]["attributes"]["distinguishedName"]
     except KeyError as error:
         logger.logfile_logger.info(
-            "inventory_ad: DN of %s not found in %s: %s" % simple_hostname,
+            "ants_inventory_ad: DN of %s not found in %s: %s" % simple_hostname,
             ldap_ou,
             error,
         )
@@ -179,7 +179,7 @@ def main():
     ad_connection = connect_to_ad(cfg["ldap_user"], cfg["ldap_pw"], cfg["ldap_host"])
     online = bool(ad_connection)
     if online:
-        logger.logfile_logger.info("inventory_ad: Using online results from AD")
+        logger.logfile_logger.info("ants_inventory_ad: Using online results from AD")
         # Initializing output
         output = dict()
         output[cfg["common_group"]] = [fqdn]
@@ -214,7 +214,7 @@ def main():
 
     # We are not bound to AD we are offline
     else:
-        logger.logfile_logger.info("inventory_ad: Using cached results from AD")
+        logger.logfile_logger.info("ants_inventory_ad: Using cached results from AD")
         # Reading cache file
         cached_output = read_cache(cache_file)
         if cached_output:

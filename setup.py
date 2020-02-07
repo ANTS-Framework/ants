@@ -31,7 +31,7 @@ setuptools.setup(
     ],
     author_email="balz.aschwanden@unibas.ch, jan.welker@unibas.ch",
     license="GPLv3",
-    scripts=["bin/ants", "antslib/inventory/inventory_ad", "antslib/inventory/inventory_default"],
+    scripts=["bin/ants", "bin/ants_inventory_ad", "bin/ants_inventory_default"],
     classifiers=[
         # https://pypi.python.org/pypi?%3Aaction=list_classifiers
         "Development Status :: 5 - Production/Stable",
@@ -49,7 +49,6 @@ setuptools.setup(
     install_requires=requirements,
     package_data={
         "antslib": ["etc/ants.cfg"],
-        "antslib.inventory": ["inventory_default", "inventory_ad"],
         "antslib.plugins": ["callback/ants_logstash.py"],
     },
     python_requires=">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*",
