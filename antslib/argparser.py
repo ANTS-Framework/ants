@@ -302,14 +302,7 @@ def parse_args(version, LOG_RECAP, DESTINATION, CFG):
     parser.add_argument(
         "--ansible_python_interpreter",
         help="Specifies a specific python interpreter. Overwrites the config value",
-        default=CFG["ansible_python_interpreter"]
-    )
-
-    # Known hosts file
-    parser.add_argument(
-        "--known_hosts_file",
-        help="Absolute path to the known hosts file for ANTS.",
-        default=CFG["known_hosts_file"]
+        default=CFG["ansible_python_interpreter"],
     )
 
     # Parse arguments

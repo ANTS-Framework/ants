@@ -27,46 +27,72 @@ def check_git_installed():
 
 def check_known_host(args):
     """
-    Reads the used git repository as well as the known hosts file from the config.
-    Checks if the repository hostname is contained in the known_hosts_file.
+    Reads the used git repository as well as the known hosts file used by ansible.
+    The possible known hosts files come from https://github.com/ansible/ansible/blob/8ac0bbcbf60b2874ea1aaa4538389859c028b12c/lib/ansible/module_utils/known_hosts.py#L99-L109
+    Afterwards checks if the repository hostname is contained in the known_hosts_file.
     """
-    known_hosts_file = args.known_hosts_file
+    if "USER" in os.environ:
+        user_known_host_file = os.path.expandvars("~${USER}/.ssh/known_hosts")
+    else:
+        user_known_host_file = "~/.ssh/known_hosts"
 
-    if os.path.isfile(known_hosts_file):
-        file = open(known_hosts_file, "r")
-        git_repo = args.git_repo
-        hostname = (up.urlparse(git_repo)).hostname
+    known_hosts_file = os.path.expanduser(user_known_host_file)
 
-        if hostname in file.read():
-            logger.console_logger.info(
-                "Hostname {hostname} for git-repository {git_repo} is added in {known_hosts_file}".format(
-                    hostname=hostname,
-                    git_repo=git_repo,
-                    known_hosts_file=known_hosts_file,
-                )
+    possible_files = [
+        known_hosts_file,
+        "/etc/ssh/ssh_known_hosts",
+        "/etc/ssh/ssh_known_hosts2",
+        "/etc/openssh/ssh_known_hosts",
+    ]
+
+    # Is the host key found in any of the known_host_files
+    found = False
+    # Does one of the possible known host files exist
+    exist = False
+
+    git_repo = args.git_repo
+    hostname = (up.urlparse(git_repo)).hostname
+
+    for file in possible_files:
+        if os.path.isfile(file):
+            exist = True
+            file_obj = open(file, "r")
+
+            if hostname in file_obj.read():
+                found = True
+                found_file = file
+                break
+
+    if not exist:
+        sys.exit(
+            "No possible known hosts file {possible_files} does exist.".format(
+                possible_files=possible_files
             )
-        else:
-            sys.exit(
-                "Hostname {hostname} for git-repository {git_repo} is not added in {known_hosts_file}".format(
-                    hostname=hostname,
-                    git_repo=git_repo,
-                    known_hosts_file=known_hosts_file,
-                )
-            )
+        )
 
+    if found:
+        logger.console_logger.info(
+            "Hostname {hostname} for git-repository {git_repo} is added in {known_hosts_file}".format(
+                hostname=hostname, git_repo=git_repo, known_hosts_file=found_file
+            )
+        )
     else:
         sys.exit(
-            "Known hosts file {known_hosts_file} does not exists.".format(
-                known_hosts_file=known_hosts_file
+            "Hostname {hostname} could not be found in: {possible_files}".format(
+                hostname=hostname, possible_files=possible_files
             )
         )
 
 
 def check_ssh_key(args):
+    """
+    Checks if a checkout of the playbook repository is possible to validate the ssh-key. If the repository is not
+    yet cloned, a clone will be attempted which serves the same purpose.
+    """
     if os.path.isdir(args.destination):
         if os.path.isfile(args.ssh_key):
             try:
-                pull_statement = [
+                checkout_statement = [
                     "git",
                     "-C",
                     args.destination,
@@ -74,7 +100,7 @@ def check_ssh_key(args):
                     args.branch,
                 ]
                 subprocess.Popen(
-                    pull_statement,
+                    checkout_statement,
                     bufsize=1,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
