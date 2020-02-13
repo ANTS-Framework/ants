@@ -4,6 +4,7 @@ Check different requirements necessary for ants
 """
 from __future__ import print_function
 import os
+from distutils.spawn import find_executable
 import subprocess
 import sys
 import urllib.parse as up
@@ -15,14 +16,24 @@ def check_git_installed():
     """
     Checks if the git command can be run.
     """
+    path = os.environ["PATH"]
     try:
         subprocess.Popen(
             "git", bufsize=1, stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
     except OSError:
-        sys.exit("Git is not installed")
+        sys.exit(
+            "CHECK GIT:\t\tNo git executable found in the following path: {path}".format(
+                path=path
+            )
+        )
 
-    logger.console_logger.info("Git is installed.")
+    git_path = find_executable("git")
+    logger.console_logger.info(
+        "CHECK GIT:\t\tWorking git executable found at the following location: {path}.".format(
+            path=git_path
+        )
+    )
 
 
 def check_known_host(args):
@@ -65,20 +76,20 @@ def check_known_host(args):
 
     if not exist:
         sys.exit(
-            "No possible known hosts file {possible_files} does exist.".format(
+            "CHECK KNOWN HOSTS:\tNo possible known hosts file {possible_files} does exist.".format(
                 possible_files=possible_files
             )
         )
 
     if found:
         logger.console_logger.info(
-            "Hostname {hostname} for git-repository {git_repo} is added in {known_hosts_file}".format(
-                hostname=hostname, git_repo=git_repo, known_hosts_file=found_file
+            "CHECK KNOWN HOSTS:\tHostname {hostname} for git-repository {git_repo} is added in {known_hosts}".format(
+                hostname=hostname, git_repo=git_repo, known_hosts=found_file
             )
         )
     else:
         sys.exit(
-            "Hostname {hostname} could not be found in: {possible_files}".format(
+            "CHECK KNOWN HOSTS:\tHostname {hostname} could not be found in: {possible_files}".format(
                 hostname=hostname, possible_files=possible_files
             )
         )
@@ -106,11 +117,19 @@ def check_ssh_key(args):
                     stderr=subprocess.PIPE,
                 )
             except OSError as e:
-                sys.exit("Permissions not sufficient.")
+                sys.exit(
+                    "CHECK SSH KEY:\t\tPermissions for git checkout of {repo} at {dest} not sufficient.".format(
+                        repo=args.git_repo, dest=args.destination
+                    )
+                )
 
-            logger.console_logger.info("Connection to playbook successful.")
+            logger.console_logger.info(
+                "CHECK SSH KEY:\t\tConnection to playbook repository {repo} at {dest} successful.".format(
+                    repo=args.git_repo, dest=args.destination
+                )
+            )
         else:
-            sys.exit("Given ssh-key does not exist.")
+            sys.exit("CHECK SSH KEY:\t\tGiven ssh-key does not exist.")
     else:
         try:
             clone_statement = ["git", "clone", args.git_repo, args.destination]
@@ -122,13 +141,21 @@ def check_ssh_key(args):
             )
         except OSError as e:
             sys.exit(
-                "Could not clone the playbook repository, please check the permissions."
+                "CHECK SSH KEY:\t\tCould not clone the playbook repository {repo} to {dest}, please check the "
+                "permissions.".format(repo=args.git_repo, dest=args.destination)
             )
 
-        logger.console_logger.info("Clone of the playbook successful.")
+        logger.console_logger.info(
+            "CHECK SSH KEY:\t\tClone of the playbook repository {repo} to {dest} successful.".format(
+                repo=args.git_repo, dest=args.destination
+            )
+        )
 
 
 def check_run_requirements(args):
+    """
+    Takes the ants arguments of the argparser and forwards it to 3 check functions which are then executed.
+    """
     check_git_installed()
     check_known_host(args)
     check_ssh_key(args)
