@@ -25,6 +25,7 @@ import subprocess
 import sys
 
 from antslib import argparser, configer, logger
+from antslib.pre_run_checker import check_run_requirements
 
 CFG = configer.read_config("main")
 
@@ -248,6 +249,7 @@ def __main__():
                 logger.console_logger.error(error)
                 raise
 
+    check_run_requirements(args)
     run_ansible(args)
 
 
