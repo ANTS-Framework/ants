@@ -35,15 +35,21 @@ class GetStatusAction(argparse.Action):
 
     def __init__(self, option_strings, logfile, dest, nargs=None, **kwargs):
         self.logfile = logfile
-        super(GetStatusAction, self).__init__(option_strings, dest, nargs=0, **kwargs)
+        super(GetStatusAction, self).__init__(
+            option_strings, dest, nargs=nargs, **kwargs
+        )
 
     def __call__(self, parser, namespace, values, option_string=None):
         status = "failed"
         logfile = self.logfile
         if os.path.isfile(logfile):
             with open(logfile, "r") as f:
+                status = "Last Run: \n"
                 for line in f:
-                    if "Client status:" in line:
+                    if values and "*" not in line:
+                        date, line = line.split("\t")
+                        status += "{line}".format(line=line)
+                    if not values and "Client status:" in line:
                         status = line.rstrip().split("Client status:")[1].split()[0]
         sys.stdout.write("%s\n" % status)
         parser.exit()
@@ -166,9 +172,11 @@ def parse_args(version, LOG_RECAP, DESTINATION, CFG):
     parser.add_argument(
         "-s",
         "--status",
-        help="Print status of last run and exit",
+        help="Print status of last run and exit. With verbose specified, more information is gathered and returned.",
         action=GetStatusAction,
         logfile=LOG_RECAP,
+        nargs="?",
+        choices=["verbose", "v"],
     )
     parser.add_argument(
         "-g",
@@ -237,6 +245,7 @@ def parse_args(version, LOG_RECAP, DESTINATION, CFG):
     parser.add_argument(
         "-v", "--verbose", help="Run ansible pull in verbose mode", action="count"
     )
+
     parser.add_argument(
         "-q",
         "--quiet",
