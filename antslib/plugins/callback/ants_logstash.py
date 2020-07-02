@@ -239,14 +239,6 @@ class CallbackModule(CallbackBase):
         data["ansible_task"] = str(result._task)
         data["ansible_playbook"] = self.playbook
 
-        results = self._dump_results(result._result)
-        try:
-            results_dict = json.loads(results)
-            data = self.recurse_results(results_dict, data, result._task.action)
-        except KeyError as err:
-            data["ansible_logstash_error"] = err
-            data["ansible_result"] = results
-
         self.logger.info("ansible ok", extra=data)
         self.display_data(data)
 
@@ -259,14 +251,6 @@ class CallbackModule(CallbackBase):
         data["ansible_task_type"] = str(result._task.action)
         data["ansible_task"] = str(result._task)
         data["ansible_playbook"] = self.playbook
-
-        results = self._dump_results(result._result)
-        try:
-            results_dict = json.loads(results)
-            data = self.recurse_results(results_dict, data, result._task.action)
-        except KeyError as err:
-            data["ansible_logstash_error"] = err
-            data["ansible_result"] = results
 
         self.logger.info("ansible skipped", extra=data)
         self.display_data(data)
@@ -298,14 +282,6 @@ class CallbackModule(CallbackBase):
         data["ansible_task"] = str(result._task)
         data["ansible_playbook"] = self.playbook
         self.errors += 1
-
-        results = self._dump_results(result._result)
-        try:
-            results_dict = json.loads(results)
-            data = self.recurse_results(results_dict, data, result._task.action)
-        except KeyError as err:
-            data["ansible_logstash_error"] = err
-            data["ansible_result"] = results
 
         self.logger.error("ansible failed", extra=data)
         self.display_data(data)
