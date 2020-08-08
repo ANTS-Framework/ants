@@ -1,5 +1,5 @@
 ansible==2.9.9
-ldap3==2.7
+ldap3==2.8
 python-logstash==0.4.6
 configparser==5.0.0
 future==0.18.2
