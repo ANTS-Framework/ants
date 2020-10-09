@@ -123,6 +123,9 @@ def run_ansible(args):
         )
         logger.console_logger.debug("Using static inventory file at %s." % inventory)
 
+    # Create dedicated env for this subprocess. Source: https://stackoverflow.com/a/4453495
+    subprocess_env = os.environ.copy()
+
     cmd = [
         ansible_pull_exe,
         "--clean",
@@ -183,7 +186,7 @@ def run_ansible(args):
     logger.console_logger.debug(
         "Add env variable ANSIBLE_CALLBACK_PLUGINS: %s" % ANSIBLE_CALLBACK_PLUGINS
     )
-    os.environ["ANSIBLE_CALLBACK_PLUGINS"] = ANSIBLE_CALLBACK_PLUGINS
+    subprocess_env["ANSIBLE_CALLBACK_PLUGINS"] = ANSIBLE_CALLBACK_PLUGINS
 
     # Only add python interpreter env variable if the given path exists and is executable
     ANSIBLE_PYTHON_INTERPRETER = args.ansible_python_interpreter
@@ -194,7 +197,7 @@ def run_ansible(args):
             "Add env variable ANSIBLE_PYTHON_INTERPRETER: %s"
             % ANSIBLE_PYTHON_INTERPRETER
         )
-        os.environ["ANSIBLE_PYTHON_INTERPRETER"] = ANSIBLE_PYTHON_INTERPRETER
+        subprocess_env["ANSIBLE_PYTHON_INTERPRETER"] = ANSIBLE_PYTHON_INTERPRETER
     else:
         logger.console_logger.warning(
             "File not found or not executable\n\tANSIBLE_PYTHON_INTERPRETER: %s"
@@ -206,14 +209,29 @@ def run_ansible(args):
             "Add env variable ANSIBLE_CALLBACK_WHITELIST: %s"
             % args.ansible_callback_whitelist
         )
-        os.environ["ANSIBLE_CALLBACK_WHITELIST"] = args.ansible_callback_whitelist
+        subprocess_env["ANSIBLE_CALLBACK_WHITELIST"] = args.ansible_callback_whitelist
         cfg_callback_plugins = configer.read_config("callback_plugins")
         for key, value in cfg_callback_plugins.items():
             logger.console_logger.debug("Add env variable: %s: %s" % (key, value))
-            os.environ[key] = value
+            subprocess_env[key] = value
+    if CFG["ansible_git_path"]:
+        logger.console_logger.debug("Updating PATH variable for ansible run.")
+        subprocess_env["PATH"] = "%s:%s" % (
+            args.ansible_git_path,
+            subprocess_env["PATH"],
+        )
+        logger.console_logger.debug("Add git to PATH: %s" % subprocess_env["PATH"])
+
+    # Make sure the new macOS versioning is used. Based on work by Greg Neagle
+    # Source: https://macsysadmin.se/slides/ThisOneGoesTo11.pdf
+    subprocess_env[{"SYSTEM_VERSION_COMPAT": "0"}]
 
     proc = subprocess.Popen(
-        cmd, bufsize=1, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        cmd,
+        bufsize=1,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        env=subprocess_env,
     )
     return parse_proc(proc)
 
