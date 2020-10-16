@@ -198,9 +198,9 @@ You can add other callback plugins to ``ansible_callback_whitelist`` if you desi
 
 Please note that the casing of the environment variables is essential for the callback plugins to work. The casing can be found using ``ansible-doc -t callback logstash $name_of_plugin``.
 
--------
-Testing
--------
+-----------------------
+Testing and Development
+-----------------------
 You made changes to the ANTS code or you want to test a feature that hasn't been released yet? This is
 what you should do:
 
@@ -208,6 +208,16 @@ If what you're looking for is already available in pypi as a pre-release, you ca
 by telling pip to include pre-releases in its search: ``pip install ants_client --pre``
 
 If you made local changes to your code and want to test them, you can set up a `virtual environment <https://virtualenv.pypa.io/en/stable/>`__, `activate it <https://virtualenv.pypa.io/en/stable/userguide/#activate-script>`__ and install your code locally using ``pip install -e <path_to_ants>``.
+
+Make sure all inventory files are found. You can run a local dev version of ants ANTS using the following commands:
+.. code-block::
+    git clone https://github.com/ANTS-Framework/ants.git ants_dev
+    cd ants_dev
+    python3 -m venv venv
+    source venv/bin/activate
+    python -m pip install -e .
+    sudo ants --ansible_pull_exe $(which ansible-pull) -i $(which inventory_ad) -vvv
+
 
 -------------
 Communication
