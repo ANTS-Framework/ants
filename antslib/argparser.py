@@ -83,9 +83,7 @@ class GetGroupsAction(argparse.Action):
 
     def __call__(self, parser, namespace, values, option_string=None):
         cmd = [self.inventory_script]
-        proc = subprocess.Popen(
-            cmd, bufsize=1, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-        )
+        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (out, err) = proc.communicate()
         sys.stdout.write("%s\n" % out.decode("utf-8"))
         parser.exit()
