@@ -228,11 +228,7 @@ def run_ansible(args):
 
     check_run_requirements(args, subprocess_env)
     proc = subprocess.Popen(
-        cmd,
-        bufsize=1,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        env=subprocess_env,
+        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=subprocess_env,
     )
     return parse_proc(proc)
 

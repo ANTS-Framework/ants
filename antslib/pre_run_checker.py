@@ -19,9 +19,7 @@ def check_git_installed(subprocess_env):
     """
     path = subprocess_env["PATH"]
     try:
-        subprocess.Popen(
-            "git", bufsize=1, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-        )
+        subprocess.Popen("git", stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     except OSError:
         sys.exit(
             "CHECK GIT:\t\tNo git executable found in the following path: {path}".format(
@@ -113,7 +111,6 @@ def check_ssh_key(args, subprocess_env):
                 ]
                 subprocess.Popen(
                     checkout_statement,
-                    bufsize=1,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     env=subprocess_env,
@@ -136,10 +133,7 @@ def check_ssh_key(args, subprocess_env):
         try:
             clone_statement = ["git", "clone", args.git_repo, args.destination]
             subprocess.Popen(
-                clone_statement,
-                bufsize=1,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
+                clone_statement, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             )
         except OSError:
             sys.exit(
