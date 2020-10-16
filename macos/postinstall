@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 #  ANTS pkg postinstall script for relocatable python
 #
