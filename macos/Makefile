@@ -14,7 +14,7 @@ PAYLOAD=\
 
 ANTS_LIB=/Library/ANTS-Framework
 VENV_PYTHON_EXE=${ANTS_LIB}/bin/python
-PYTHON_VERSION=3.7.4
+PYTHON_VERSION=3.8.5
 
 clone_reloc_python:
 	# Clone the relocatable python project (https://github.com/gregneagle/relocatable-python) into /tmp
