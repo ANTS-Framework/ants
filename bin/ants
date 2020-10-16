@@ -8,7 +8,7 @@ Run ansible-pull with a set of defined parameters
 and log the content of these runs.
 """
 
-__version__ = "3.0.1"
+__version__ = "3.0.2"
 
 __author__ = "Balz Aschwanden"
 __email__ = "balz.aschwanden@unibas.ch"
@@ -95,7 +95,8 @@ def run_ansible(args):
 
     if not os.path.isfile(ansible_pull_exe):
         logger.console_logger.debug(
-            "Variable ansible_pull_exe is not set. Searching in PATH: %s" % path
+            "Variable ansible_pull_exe not found at %s. Searching in PATH: %s"
+            % (ansible_pull_exe, path)
         )
         ansible_pull_exe = find_executable("ansible-pull", path=path)
 

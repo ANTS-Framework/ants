@@ -1,2 +1,2 @@
 # For python3 a specific pre release version has to be picked at the moment until the next release comes out
-ants-client==3.0.1
+ants-client==3.0.2
