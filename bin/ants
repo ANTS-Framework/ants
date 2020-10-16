@@ -215,15 +215,17 @@ def run_ansible(args):
             logger.console_logger.debug("Add env variable: %s: %s" % (key, value))
             subprocess_env[key] = value
 
-    if CFG["ansible_git_path"]:
+    if CFG["ansible_git_directory"]:
         logger.console_logger.debug(
-            "Using the following git path: %s" % CFG["ansible_git_path"]
+            "Using the following git path: %s" % CFG["ansible_git_directory"]
         )
         subprocess_env["PATH"] = "%s:%s" % (
-            CFG["ansible_git_path"],
+            CFG["ansible_git_directory"],
             subprocess_env["PATH"],
         )
-        logger.console_logger.debug("Add git to PATH: %s" % subprocess_env["PATH"])
+        logger.console_logger.debug(
+            "Add git to PATH. PATH is now: %s" % subprocess_env["PATH"]
+        )
 
     # Make sure the new macOS versioning is used. Based on work by Greg Neagle
     # Source: https://macsysadmin.se/slides/ThisOneGoesTo11.pdf

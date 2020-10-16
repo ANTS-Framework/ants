@@ -27,7 +27,7 @@ def check_git_installed(subprocess_env):
             )
         )
 
-    git_path = find_executable("git")
+    git_path = find_executable("git", path=path)
     logger.console_logger.info(
         "CHECK GIT:\t\tWorking git executable found at the following location: {path}.".format(
             path=git_path
@@ -109,13 +109,15 @@ def check_ssh_key(args, subprocess_env):
                     "checkout",
                     args.branch,
                 ]
-                subprocess.Popen(
+                proc = subprocess.Popen(
                     checkout_statement,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     env=subprocess_env,
                 )
             except OSError:
+                logger.console_logger.error(proc.stdout.read())
+                logger.console_logger.error(proc.stderr.read())
                 sys.exit(
                     "CHECK SSH KEY:\t\tPermissions for git checkout of {repo} at {dest} not sufficient.".format(
                         repo=args.git_repo, dest=args.destination
