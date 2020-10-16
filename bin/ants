@@ -214,8 +214,11 @@ def run_ansible(args):
         for key, value in cfg_callback_plugins.items():
             logger.console_logger.debug("Add env variable: %s: %s" % (key, value))
             subprocess_env[key] = value
+
     if CFG["ansible_git_path"]:
-        logger.console_logger.debug("Updating PATH variable for ansible run.")
+        logger.console_logger.debug(
+            "Using the following git path: %s" % CFG["ansible_git_path"]
+        )
         subprocess_env["PATH"] = "%s:%s" % (
             CFG["ansible_git_path"],
             subprocess_env["PATH"],
