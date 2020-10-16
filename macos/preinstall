@@ -1,8 +1,8 @@
 #!/bin/zsh
 
 # unload ants launch daemons
-launchctl unload -w /Library/LaunchDaemons/ch.unibas.its.cs.ants.plist
-launchctl unload -w /Library/LaunchDaemons/ch.unibas.its.cs.ants.run-now.plist
+launchctl unload /Library/LaunchDaemons/ch.unibas.its.cs.ants.plist
+launchctl unload /Library/LaunchDaemons/ch.unibas.its.cs.ants.run-now.plist
 
 # Check if an old version of ANTS (< 2) is installed. If so, remove it before installing the new one.
 old_ants_bin="/Library/ANTS-Framework/bin"
