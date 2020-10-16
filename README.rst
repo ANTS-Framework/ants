@@ -210,7 +210,9 @@ by telling pip to include pre-releases in its search: ``pip install ants_client 
 If you made local changes to your code and want to test them, you can set up a `virtual environment <https://virtualenv.pypa.io/en/stable/>`__, `activate it <https://virtualenv.pypa.io/en/stable/userguide/#activate-script>`__ and install your code locally using ``pip install -e <path_to_ants>``.
 
 Make sure all inventory files are found. You can run a local dev version of ants ANTS using the following commands:
+
 .. code-block::
+
     git clone https://github.com/ANTS-Framework/ants.git ants_dev
     cd ants_dev
     python3 -m venv venv
