@@ -23,6 +23,7 @@ import os
 import shutil
 import subprocess
 import sys
+from distutils.spawn import find_executable
 
 from antslib import argparser, configer, logger
 from antslib.pre_run_checker import check_run_requirements
@@ -33,19 +34,6 @@ ANTS_PATH = os.path.dirname(os.path.realpath(__file__))
 DESTINATION = os.path.expanduser(CFG["destination"])
 _ROOT = os.path.abspath(os.path.dirname(__file__))
 _PROJECT_ROOT = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
-
-
-def find_file(f):
-    """Search for a file in environment PATH and return first match or None"""
-    paths = os.environ["PATH"].split(":")
-    paths.insert(0, _ROOT)
-    for path in paths:
-        file_path = os.path.join(path, f)
-        logger.console_logger.debug("Looking for %s in %s" % (f, path))
-        if os.path.isfile(file_path):
-            logger.console_logger.debug("Found %s at %s" % (f, file_path))
-            return file_path
-    return None
 
 
 def parse_proc(proc):
@@ -94,18 +82,22 @@ def run_ansible(args):
     Documentation:
     https://docs.ansible.com/ansible/latest/dev_guide/developing_api.html
     """
+    # Create dedicated env for this subprocess. Source: https://stackoverflow.com/a/4453495
+    subprocess_env = os.environ.copy()
+    path = subprocess_env["PATH"]
+
     ansible_pull_exe = args.ansible_pull_exe
     if not ansible_pull_exe:
         logger.console_logger.debug(
-            "Variable ansible_pull_exe is not set. Searching in PATH."
+            "Variable ansible_pull_exe is not set. Searching in PATH: %s" % path
         )
-        ansible_pull_exe = find_file("ansible-pull")
+        ansible_pull_exe = find_executable("ansible-pull", path=path)
 
     if not os.path.isfile(ansible_pull_exe):
         logger.console_logger.debug(
-            "Invalid path for ansible_pull_exe. Searching in PATH."
+            "Variable ansible_pull_exe is not set. Searching in PATH: %s" % path
         )
-        ansible_pull_exe = find_file("ansible-pull")
+        ansible_pull_exe = find_executable("ansible-pull", path=path)
 
     if not ansible_pull_exe:
         sys.exit("Could not find executable ansible-pull. Aborting.")
@@ -122,9 +114,6 @@ def run_ansible(args):
             "Inventory file at %s is not executable." % inventory
         )
         logger.console_logger.debug("Using static inventory file at %s." % inventory)
-
-    # Create dedicated env for this subprocess. Source: https://stackoverflow.com/a/4453495
-    subprocess_env = os.environ.copy()
 
     cmd = [
         ansible_pull_exe,
