@@ -3,20 +3,21 @@
 Check different requirements necessary for ants
 """
 from __future__ import print_function
+
 import os
-from distutils.spawn import find_executable
 import subprocess
 import sys
 import urllib.parse as up
+from distutils.spawn import find_executable
 
 from antslib import logger
 
 
-def check_git_installed():
+def check_git_installed(subprocess_env):
     """
     Checks if the git command can be run.
     """
-    path = os.environ["PATH"]
+    path = subprocess_env["PATH"]
     try:
         subprocess.Popen(
             "git", bufsize=1, stdout=subprocess.PIPE, stderr=subprocess.PIPE
@@ -95,7 +96,7 @@ def check_known_host(args):
         )
 
 
-def check_ssh_key(args):
+def check_ssh_key(args, subprocess_env):
     """
     Checks if a checkout of the playbook repository is possible to validate the ssh-key. If the repository is not
     yet cloned, a clone will be attempted which serves the same purpose.
@@ -115,8 +116,9 @@ def check_ssh_key(args):
                     bufsize=1,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
+                    env=subprocess_env,
                 )
-            except OSError as e:
+            except OSError:
                 sys.exit(
                     "CHECK SSH KEY:\t\tPermissions for git checkout of {repo} at {dest} not sufficient.".format(
                         repo=args.git_repo, dest=args.destination
@@ -139,7 +141,7 @@ def check_ssh_key(args):
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             )
-        except OSError as e:
+        except OSError:
             sys.exit(
                 "CHECK SSH KEY:\t\tCould not clone the playbook repository {repo} to {dest}, please check the "
                 "permissions.".format(repo=args.git_repo, dest=args.destination)
@@ -152,10 +154,10 @@ def check_ssh_key(args):
         )
 
 
-def check_run_requirements(args):
+def check_run_requirements(args, subprocess_env):
     """
     Takes the ants arguments of the argparser and forwards it to 3 check functions which are then executed.
     """
-    check_git_installed()
+    check_git_installed(subprocess_env)
     check_known_host(args)
-    check_ssh_key(args)
+    check_ssh_key(args, subprocess_env)

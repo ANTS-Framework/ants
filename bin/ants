@@ -226,6 +226,7 @@ def run_ansible(args):
     # Source: https://macsysadmin.se/slides/ThisOneGoesTo11.pdf
     subprocess_env["SYSTEM_VERSION_COMPAT"] = "0"
 
+    check_run_requirements(args, subprocess_env)
     proc = subprocess.Popen(
         cmd,
         bufsize=1,
@@ -267,7 +268,6 @@ def __main__():
                 logger.console_logger.error(error)
                 raise
 
-    check_run_requirements(args)
     run_ansible(args)
 
 
