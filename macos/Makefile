@@ -8,7 +8,6 @@ PAYLOAD=\
 		ants_client_relocatable_python \
 		pack-script-preinstall \
 		pack-script-postinstall \
-		pack-pathd \
 		pack-Library-LaunchDaemons-ch.unibas.its.cs.ants.plist \
 		pack-Library-LaunchDaemons-ch.unibas.its.cs.ants.run-now.plist
 
@@ -37,13 +36,3 @@ fix_python_path:
 	done
 
 ants_client_relocatable_python: clone_reloc_python setup_reloc_python fix_python_path
-
-l_pathd:
-	@sudo mkdir -p ${WORK_D}/private/etc/paths.d
-	@sudo chown -R root:wheel ${WORK_D}/private/etc/paths.d
-	@sudo chmod -R 755 ${WORK_D}/private/etc/paths.d
-
-pack-pathd: l_pathd
-	@sudo ${CP} ch.unibas.its.cs.ants ${WORK_D}/private/etc/paths.d
-	@sudo chown -R root:wheel ${WORK_D}/private/etc/paths.d/ch.unibas.its.cs.ants
-	@sudo chmod -R 644 ${WORK_D}/private/etc/paths.d/ch.unibas.its.cs.ants

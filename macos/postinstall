@@ -1,15 +1,11 @@
 #!/bin/zsh
 
-#  ANTS pkg postinstall script for relocatable python
-#
-#  Load ants launch daemons
-#
-#
-#  Created by Tim Königl
-#
-#  Created: 12/02/19
-#  Updated: 12/05/19
-
 # load and launch daemons
 launchctl load -w /Library/LaunchDaemons/ch.unibas.its.cs.ants.plist
 launchctl load -w /Library/LaunchDaemons/ch.unibas.its.cs.ants.run-now.plist
+
+# add ants to default path
+if [[ ! -L /usr/local/bin/ants ]]; then
+    echo "Add ants to default PATH"
+    /bin/ln -s /Library/ANTS-Framework/Python.framework/Versions/Current/bin/ants /usr/local/bin/ants
+fi
