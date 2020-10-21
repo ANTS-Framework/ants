@@ -34,6 +34,7 @@ ANTS_PATH = os.path.dirname(os.path.realpath(__file__))
 DESTINATION = os.path.expanduser(CFG["destination"])
 _ROOT = os.path.abspath(os.path.dirname(__file__))
 _PROJECT_ROOT = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
+_PYTHON_EXECUTABLE_PATH = os.path.dirname(sys.executable)
 
 
 def parse_proc(proc):
@@ -85,6 +86,7 @@ def run_ansible(args):
     # Create dedicated env for this subprocess. Source: https://stackoverflow.com/a/4453495
     subprocess_env = os.environ.copy()
     path = subprocess_env["PATH"]
+    path = f"{_PYTHON_EXECUTABLE_PATH}:{path}"
 
     ansible_pull_exe = args.ansible_pull_exe
     if not ansible_pull_exe:
