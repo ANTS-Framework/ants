@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 
 """ants_inventory_ad
 ===============
@@ -60,7 +60,9 @@ def connect_to_ad(ldap_user, ldap_pw, ldap_host):
         else:
             return None
     except core.exceptions.LDAPSocketOpenError as e:
-        logger.logfile_logger.error("ants_inventory_ad: LDAPSocketOpenError while binding:")
+        logger.logfile_logger.error(
+            "ants_inventory_ad: LDAPSocketOpenError while binding:"
+        )
         logger.logfile_logger.error("\t%s" % e)
         return None
 
