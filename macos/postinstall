@@ -4,6 +4,11 @@
 launchctl load -w /Library/LaunchDaemons/ch.unibas.its.cs.ants.plist
 launchctl load -w /Library/LaunchDaemons/ch.unibas.its.cs.ants.run-now.plist
 
+if [[ ! -d /usr/local/bin ]]; then
+    echo "Creating directory: /usr/local/bin"
+    /bin/mkdir /usr/local/bin
+fi
+
 # add ants to default path
 if [[ ! -L /usr/local/bin/ants ]]; then
     echo "Add ants to default PATH"
