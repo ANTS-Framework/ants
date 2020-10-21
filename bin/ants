@@ -8,7 +8,7 @@ Run ansible-pull with a set of defined parameters
 and log the content of these runs.
 """
 
-__version__ = "3.0.2"
+__version__ = "3.0.3"
 
 __author__ = "Balz Aschwanden"
 __email__ = "balz.aschwanden@unibas.ch"
@@ -91,32 +91,29 @@ def run_ansible(args):
     ansible_pull_exe = args.ansible_pull_exe
     if not ansible_pull_exe:
         logger.console_logger.debug(
-            "Variable ansible_pull_exe is not set. Searching in PATH: %s" % path
+            f"Variable ansible_pull_exe is not set. Searching in PATH: {path}"
         )
         ansible_pull_exe = find_executable("ansible-pull", path=path)
 
     if not os.path.isfile(ansible_pull_exe):
         logger.console_logger.debug(
-            "Variable ansible_pull_exe not found at %s. Searching in PATH: %s"
-            % (ansible_pull_exe, path)
+            f"Variable ansible_pull_exe not found at {ansible_pull_exe}. Searching in PATH: {path}"
         )
         ansible_pull_exe = find_executable("ansible-pull", path=path)
 
     if not ansible_pull_exe:
         sys.exit("Could not find executable ansible-pull. Aborting.")
     if not os.access(ansible_pull_exe, os.X_OK):
-        sys.exit("File is not executable at %s. Aborting." % ansible_pull_exe)
-    logger.console_logger.debug("Using %s" % ansible_pull_exe)
+        sys.exit(f"File is not executable at {ansible_pull_exe}. Aborting.")
+    logger.console_logger.debug(f"Using {ansible_pull_exe}")
 
     inventory = args.inventory
     if not os.path.isfile(inventory):
-        sys.exit("Could not find file at %s. Aborting." % inventory)
+        sys.exit(f"Could not find file at {inventory}. Aborting.")
 
     if not os.access(inventory, os.X_OK):
-        logger.console_logger.debug(
-            "Inventory file at %s is not executable." % inventory
-        )
-        logger.console_logger.debug("Using static inventory file at %s." % inventory)
+        logger.console_logger.debug(f"Inventory file at {inventory} is not executable.")
+        logger.console_logger.debug(f"Using static inventory file at {inventory}.")
 
     cmd = [
         ansible_pull_exe,
@@ -134,11 +131,11 @@ def run_ansible(args):
     ]
 
     if os.path.isfile(args.ssh_key):
-        logger.console_logger.debug("Found ssh key at %s" % args.ssh_key)
+        logger.console_logger.debug(f"Found ssh key at {args.ssh_key}")
         cmd.append("--private-key")
         cmd.append(args.ssh_key)
     else:
-        logger.console_logger.debug("No key found at %s" % args.ssh_key)
+        logger.console_logger.debug(f"No key found at {args.ssh_key}")
 
     if args.verbose:
         cmd.append("-%s" % ("v" * args.verbose))
@@ -154,8 +151,7 @@ def run_ansible(args):
 
     if args.wait:
         logger.console_logger.debug(
-            "Running ansible-pull with a random wait intervall of %s sec"
-            % CFG["wait_interval"]
+            f"Running ansible-pull with a random wait intervall of {CFG['wait_interval']} sec"
         )
         cmd.append("-s")
         cmd.append(CFG["wait_interval"])
@@ -171,12 +167,11 @@ def run_ansible(args):
     # Add user configured search path and default search path for callback plugins
     ANSIBLE_CALLBACK_PLUGINS = CFG["ansible_callback_plugins_base_path"]
     if args.ansible_callback_plugins:
-        ANSIBLE_CALLBACK_PLUGINS = "%s:%s" % (
-            args.ansible_callback_plugins,
-            ANSIBLE_CALLBACK_PLUGINS,
+        ANSIBLE_CALLBACK_PLUGINS = (
+            f"{args.ansible_callback_plugins}:{ANSIBLE_CALLBACK_PLUGINS}"
         )
     logger.console_logger.debug(
-        "Add env variable ANSIBLE_CALLBACK_PLUGINS: %s" % ANSIBLE_CALLBACK_PLUGINS
+        f"Add env variable ANSIBLE_CALLBACK_PLUGINS: {ANSIBLE_CALLBACK_PLUGINS}"
     )
     subprocess_env["ANSIBLE_CALLBACK_PLUGINS"] = ANSIBLE_CALLBACK_PLUGINS
 
@@ -186,38 +181,33 @@ def run_ansible(args):
         ANSIBLE_PYTHON_INTERPRETER, os.X_OK
     ):
         logger.console_logger.debug(
-            "Add env variable ANSIBLE_PYTHON_INTERPRETER: %s"
-            % ANSIBLE_PYTHON_INTERPRETER
+            f"Add env variable ANSIBLE_PYTHON_INTERPRETER: {ANSIBLE_PYTHON_INTERPRETER}"
         )
         subprocess_env["ANSIBLE_PYTHON_INTERPRETER"] = ANSIBLE_PYTHON_INTERPRETER
     else:
         logger.console_logger.warning(
-            "File not found or not executable\n\tANSIBLE_PYTHON_INTERPRETER: %s"
-            % ANSIBLE_PYTHON_INTERPRETER
+            f"File not found or not executable\n\tANSIBLE_PYTHON_INTERPRETER: {ANSIBLE_PYTHON_INTERPRETER}"
         )
 
     if CFG["ansible_callback_whitelist"]:
         logger.console_logger.debug(
-            "Add env variable ANSIBLE_CALLBACK_WHITELIST: %s"
-            % args.ansible_callback_whitelist
+            f"Add env variable ANSIBLE_CALLBACK_WHITELIST: {args.ansible_callback_whitelist}"
         )
         subprocess_env["ANSIBLE_CALLBACK_WHITELIST"] = args.ansible_callback_whitelist
         cfg_callback_plugins = configer.read_config("callback_plugins")
         for key, value in cfg_callback_plugins.items():
-            logger.console_logger.debug("Add env variable: %s: %s" % (key, value))
+            logger.console_logger.debug(f"Add env variable: {key}: {value}")
             subprocess_env[key] = value
 
     if CFG["ansible_git_directory"]:
         logger.console_logger.debug(
-            "Using the following git path: %s" % CFG["ansible_git_directory"]
+            f"Using the following git path: {CFG['ansible_git_directory']}. Updating PATH."
         )
-        subprocess_env["PATH"] = "%s:%s" % (
-            CFG["ansible_git_directory"],
-            subprocess_env["PATH"],
-        )
-        logger.console_logger.debug(
-            "Add git to PATH. PATH is now: %s" % subprocess_env["PATH"]
-        )
+        if not CFG["ansible_git_directory"] in subprocess_env["PATH"]:
+            subprocess_env[
+                "PATH"
+            ] = f"{CFG['ansible_git_directory']}:{subprocess_env['PATH']}"
+        logger.console_logger.debug(f"PATH is now: {subprocess_env['PATH']}")
 
     # Make sure the new macOS versioning is used. Based on work by Greg Neagle
     # Source: https://macsysadmin.se/slides/ThisOneGoesTo11.pdf
@@ -245,7 +235,7 @@ def __main__():
 
     if args.refresh:
         if os.path.exists(args.destination):
-            msg = "Deleting local git repo at %s" % args.destination
+            msg = f"Deleting local git repo at {args.destination}"
             logger.console_logger.info(msg)
             logger.logfile_logger.info(
                 "************************************************************************"

@@ -40,8 +40,8 @@ def connect_to_ad(ldap_user, ldap_pw, ldap_host):
     tls = Tls(validate=CERT_REQUIRED, ca_certs_file=certifi.where())
     server = Server(ldap_host, port=636, use_ssl=True, tls=tls)
     logger.logfile_logger.info("ants_inventory_ad: Try connection with:")
-    logger.logfile_logger.info("\tServer: %s" % server)
-    logger.logfile_logger.info("\tUser: %s" % ldap_user)
+    logger.logfile_logger.info(f"\tServer: {server}")
+    logger.logfile_logger.info("\tUser: {ldap_user}")
     connection = Connection(
         server,
         user=ldap_user,
@@ -50,7 +50,7 @@ def connect_to_ad(ldap_user, ldap_pw, ldap_host):
         raise_exceptions=True,
     )
     logger.logfile_logger.info("ants_inventory_ad: Connection object created:")
-    logger.logfile_logger.info("\t%s" % connection)
+    logger.logfile_logger.info(f"\t{connection}")
     try:
         connection.bind()
 
@@ -63,7 +63,7 @@ def connect_to_ad(ldap_user, ldap_pw, ldap_host):
         logger.logfile_logger.error(
             "ants_inventory_ad: LDAPSocketOpenError while binding:"
         )
-        logger.logfile_logger.error("\t%s" % e)
+        logger.logfile_logger.error(f"\t{e}")
         return None
 
 
@@ -76,13 +76,12 @@ def get_simple_host_name(fqdn):
 def host_exist_in_ad(connection, simple_hostname, ldap_ou):
     """Check if host can be found in Active Directory. The host does not have
        to be bound to AD it just has to exist."""
-    connection.search(ldap_ou, "(cn=%s)" % simple_hostname, attributes=["cn"])
+    connection.search(ldap_ou, f"(cn={simple_hostname})", attributes=["cn"])
     try:
         response = connection.response[0]["attributes"]["cn"]
     except KeyError as error:
         logger.logfile_logger.info(
-            "ants_inventory_ad: Host %s not found in %s: %s"
-            % (simple_hostname, ldap_ou, error)
+            f"ants_inventory_ad: Host {simple_hostname} not found in {ldap_ou}: {error}"
         )
         response = ""
 
@@ -92,15 +91,13 @@ def host_exist_in_ad(connection, simple_hostname, ldap_ou):
 def get_computer_dn(connection, simple_hostname, ldap_ou):
     """Take the simple host name and return it's distinguished name"""
     connection.search(
-        ldap_ou, "(cn=%s)" % simple_hostname, attributes=["distinguishedName"]
+        ldap_ou, f"(cn={simple_hostname})", attributes=["distinguishedName"]
     )
     try:
         response = connection.response[0]["attributes"]["distinguishedName"]
     except KeyError as error:
         logger.logfile_logger.info(
-            "ants_inventory_ad: DN of %s not found in %s: %s" % simple_hostname,
-            ldap_ou,
-            error,
+            f"ants_inventory_ad: DN of {simple_hostname} not found in {ldap_ou}: {error}"
         )
         response = ""
     return response
@@ -115,7 +112,7 @@ def get_computer_groups(connection, search_base, computer_dn, group_prefix):
     result = list()
     connection.search(
         search_base,
-        "(member:1.2.840.113556.1.4.1941:=%s)" % computer_dn,
+        f"(member:1.2.840.113556.1.4.1941:={computer_dn})",
         attributes=["cn"],
     )
     response = connection.response
@@ -130,8 +127,7 @@ def get_computer_groups(connection, search_base, computer_dn, group_prefix):
                         result.append(group_name)
             except KeyError:
                 logger.logfile_logger.info(
-                    "No groups found for %s in %s with preffix %s"
-                    % (computer_dn, search_base, group_prefix)
+                    f"No groups found for {computer_dn} in {search_base} with preffix {group_prefix}"
                 )
     return result
 
@@ -152,10 +148,9 @@ def write_cache(cache_file, output):
             for line in format_output(output):
                 cache.write(line)
     except IOError as error:
-        logger.console_logger.error("Error while writing cache: %s" % error)
+        logger.console_logger.error(f"Error while writing cache: {error}")
         logger.console_logger.error(
-            "Make sure the base process has the right permissions and path exists for %s"
-            % cache_file
+            f"Make sure the base process has the right permissions and path exists for {cache_file}"
         )
         raise
 
@@ -205,7 +200,7 @@ def main():
         try:
             write_cache(cache_file, output)
         except IOError as error:
-            logger.console_logger.error("Error while writing cache: %s" % error)
+            logger.console_logger.error(f"Error while writing cache: {error}")
 
         # Adding online Group after cache is written.
         # We do not want to cache this group
