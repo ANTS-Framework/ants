@@ -41,7 +41,7 @@ def connect_to_ad(ldap_user, ldap_pw, ldap_host):
     server = Server(ldap_host, port=636, use_ssl=True, tls=tls)
     logger.logfile_logger.info("ants_inventory_ad: Try connection with:")
     logger.logfile_logger.info(f"\tServer: {server}")
-    logger.logfile_logger.info("\tUser: {ldap_user}")
+    logger.logfile_logger.info(f"\tUser: {ldap_user}")
     connection = Connection(
         server,
         user=ldap_user,
