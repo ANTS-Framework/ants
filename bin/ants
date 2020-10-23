@@ -8,7 +8,7 @@ Run ansible-pull with a set of defined parameters
 and log the content of these runs.
 """
 
-__version__ = "3.0.4"
+__version__ = "3.0.5"
 
 __author__ = "Balz Aschwanden"
 __email__ = "balz.aschwanden@unibas.ch"
@@ -212,6 +212,11 @@ def run_ansible(args):
     # Make sure the new macOS versioning is used. Based on work by Greg Neagle
     # Source: https://macsysadmin.se/slides/ThisOneGoesTo11.pdf
     subprocess_env["SYSTEM_VERSION_COMPAT"] = "0"
+
+    # The ansible git module will fail with git version 2.27.0 if the HOME variable is not set.
+    # See https://github.com/ansible/ansible/issues/72321
+    if not subprocess_env.get("HOME"):
+        subprocess_env["HOME"] = CFG["ansible_home"]
 
     check_run_requirements(args, subprocess_env)
     proc = subprocess.Popen(
