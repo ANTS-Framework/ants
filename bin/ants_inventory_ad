@@ -65,6 +65,15 @@ def connect_to_ad(ldap_user, ldap_pw, ldap_host):
         )
         logger.logfile_logger.error(f"\t{e}")
         return None
+    except core.exceptions.LDAPInvalidCredentialsResult as e:
+        logger.logfile_logger.error(f"Invalid credentials for user: {ldap_user}")
+        for key, value in connection.results.items():
+            logger.logfile_logger.error(f"{key}: {value}")
+        logger.logfile_logger.error(
+            "ants_inventory_ad: LDAPInvalidCredentialsResult while binding:"
+        )
+        logger.logfile_logger.error(f"\t{e}")
+        return None
 
 
 def get_simple_host_name(fqdn):
