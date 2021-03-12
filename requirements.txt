@@ -1,6 +1,6 @@
 ansible==2.10.6
 ldap3==2.9
 python-logstash==0.4.6
-configparser==5.0.1
+configparser==5.0.2
 future==0.18.2
 certifi==2020.12.5
