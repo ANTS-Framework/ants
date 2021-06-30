@@ -1,4 +1,4 @@
-ansible==3.1.0
+ansible==4.2.0
 ldap3==2.9
 python-logstash==0.4.6
 configparser==5.0.2
