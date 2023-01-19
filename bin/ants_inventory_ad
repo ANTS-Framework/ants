@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/bin/python3
 
 """ants_inventory_ad
 ===============
@@ -25,7 +25,7 @@ from ssl import CERT_REQUIRED
 
 import certifi
 from antslib import configer, logger
-from ldap3 import NTLM, Connection, Server, Tls, core
+from ldap3 import SIMPLE, Connection, Server, Tls, core
 
 __author__ = "Jan Welker"
 __email__ = "jan.welker@unibas.ch"
@@ -46,7 +46,7 @@ def connect_to_ad(ldap_user, ldap_pw, ldap_host):
         server,
         user=ldap_user,
         password=ldap_pw,
-        authentication=NTLM,
+        authentication=SIMPLE,
         raise_exceptions=True,
     )
     logger.logfile_logger.info("ants_inventory_ad: Connection object created:")
