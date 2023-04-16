@@ -1,4 +1,4 @@
 # For python3 a specific pre release version has to be picked at the moment until the next release comes out
 xattr==0.10.1
-pyobjc==9.0.1
+pyobjc==9.1
 ants-client==3.0.5
